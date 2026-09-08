@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="fi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A Room of One's Own — interactive outline map</title>
+<title>SWOT kartoittaa huoneen, ei markkinaa</title>
 <style>
   :root{
+    --flag-key-idea:"ydinlause";--flag-source:"lähteestä";
+    --flag-question:"avoin kysymys";--flag-own:"säilytä sanasta sanaan";
     --wine:#CC0033;--wine-50:#FDF1F4;--petrol-50:#EDF6F6;--amber-50:#FBF3E4;--navy-50:#EBEEF5;
     --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
     --amber:#E3A130;--amber-700:#B97F1E;
@@ -110,129 +112,128 @@
   }
 </style>
 </head>
-<body data-map-key="a-room-of-ones-own-1929">
+<body data-map-key="swot-mindmap-2026"
+      data-heading-hint="Napsauta: kätke tai palauta · Raahaa kahvasta tai Alt + nuolinäppäimet: järjestä"
+      data-node-hint="Raahaa järjestääksesi"
+      data-hidden-label="{n} kätkettyä"
+      data-move-status="Oksa {n}/{total}"
+      data-copied-label="Kopioitu"
+      data-copy-failed-label="Paina ⌘C">
 <div class="brandbar"></div>
 <div class="brandline"></div>
 <main class="wrap">
   <header>
-    <div class="eyebrow">Essay map · Virginia Woolf · 1929</div>
-    <h1>A Room of One's Own</h1>
-    <p class="sub">A reading map of Woolf's argument about women, fiction and the material conditions of intellectual freedom.
-      Based on the <a href="https://www.gutenberg.ca/ebooks/woolfv-aroomofonesown/woolfv-aroomofonesown-00-h.html">Project Gutenberg Canada edition</a>.
-      This map paraphrases the essay; the linked edition notes that copyright status varies by country.</p>
-    <div class="tools" aria-label="Map controls">
-      <div class="hint"><b>Click</b> a heading to hide or restore a branch. <b>Drag</b> its node, or press <b>Alt</b> with the arrow keys, to change the reading order.</div>
+    <div class="eyebrow">Kirjoittamista vaille valmis</div>
+    <h1>SWOT kartoittaa huoneen, ei markkinaa</h1>
+    <div class="tools" aria-label="Kartan työkalut">
+      <div class="hint"><b>Napsauta</b> otsikkoa kätkeäksesi tai palauttaaksesi oksan. <b>Raahaa</b> kahvasta tai paina <b>Alt</b> ja nuolinäppäintä vaihtaaksesi järjestystä.</div>
       <div class="actions">
-        <button type="button" id="expand-all">Open all</button>
-        <button type="button" id="collapse-all">Hide all</button>
-        <button type="button" id="reset-order">Restore order</button>
-        <button type="button" class="primary" id="copy-outline">Copy as outline</button>
+        <button type="button" id="expand-all">Avaa kaikki</button>
+        <button type="button" id="collapse-all">Kätke kaikki</button>
+        <button type="button" id="reset-order">Palauta järjestys</button>
+        <button type="button" class="primary" id="copy-outline">Kopioi runkona</button>
       </div>
     </div>
   </header>
 
   <section class="root">
-    <h2>Core claim: intellectual freedom rests on material conditions</h2>
-    <p>To write freely, a woman needs dependable income, private space, education, time and a tradition she can inherit. The room is both literal and structural.</p>
+    <h2>SWOT kuvaa osallistujien uskomuksia</h2>
+    <p>Uskomukset ovat eri asia kuin yritys, ja usein arvokkaampi tieto. Nelikenttää ei silti heitetä pois: kelvoton tiedonkeruuseen, paras mitä on käsittelyyn.</p>
   </section>
 
   <section class="trunk">
-    <article class="branch" data-branch-id="method" style="--bc:var(--navy)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">How the essay thinks</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Woolf offers a route through the question, not a final verdict handed down from above.</p>
+    <article class="branch" data-branch-id="ankkuri" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">Oma ankkuri: 90-luvulta asti</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Ei "olen oppinut ajan kanssa" vaan "näin tämän jo nuorena – 30 vuotta vain vahvisti".</p>
       <div class="leaves">
-        <div class="leaf">The commission — “women and fiction” — immediately opens into several questions: women as writers, women as subjects and the relation between the two.</div>
-        <div class="leaf">Instead of pretending to deliver a neutral conclusion, Woolf exposes the path by which she reaches one limited opinion.</div>
-        <div class="leaf">The narrator and the colleges are deliberately fictional constructions. Fiction becomes a way to test where truth might be found.</div>
-        <div class="leaf">Meals, interruptions, streets, books and money enter the argument because thought happens inside daily life.</div>
-        <div class="leaf highlight">The method mirrors the thesis: readers receive a train of thought they can examine, not an authority they must obey.</div>
+        <div class="leaf">Harva huoneessa tuntee kilpailijat <b>esitteitä syvemmältä</b>: hinnat, toimituskyvyn, asiakkaiden vaihtohalun.</div>
+        <div class="leaf">Omille vahvuuksille yhtä sokeita kuin heikkouksille, <b>johtoa myöten</b>.</div>
+        <div class="leaf">Poikkeus: talo, joka kerää markkinatietoa järjestelmällisesti + kykenee introspektioon<div class="twig"><div>→ mutta sellainen ei SWOT-työpajaa kaipaakaan (kuittaa sivulauseella)</div></div></div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="conditions" style="--bc:var(--slate)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">Money, rooms and institutions</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Creative freedom is built — or withheld — through ordinary material arrangements.</p>
+    <article class="branch" data-branch-id="viat" style="--bc:var(--slate)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">Kolme rakenteellista vikaa</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Strategiakäytön viat – nopea, rytmikäs kolmen isku.</p>
       <div class="leaves">
-        <div class="leaf">At Oxbridge, the narrator is directed off the grass and refused entry to a library. Rules decide whose thought may move without interruption.</div>
-        <div class="leaf">The lavish men's college and the poor women's college are contrasted through food, buildings and accumulated endowments.</div>
-        <div class="leaf">Wealth compounds across generations. Institutions founded later, by people unable to own or earn much, begin from a different base.</div>
-        <div class="leaf">An inheritance gives the narrator independence from work chosen only to survive and from the need to flatter male approval.</div>
-        <div class="leaf highlight">A private room and reliable income are not decorations around writing; they create the power to think for oneself.</div>
-        <div class="leaf">The room stands for several connected conditions:
-          <div class="twig"><div>time that can be protected</div><div>privacy and a door that closes</div><div>economic independence</div><div>access to education and books</div></div>
+        <div class="leaf"><b>Pysäytyskuva liikkuvassa maailmassa.</b> Vahvuus, jonka tekoäly hyödykkeistää 12 kk:ssa, istuu ruudussa kuin ikuinen etu.</div>
+        <div class="leaf"><b>Kaikki laput samanarvoisia.</b> Myyntijohtajan mutu ja tilinpäätösfakta rinnakkain, ilman painoja.</div>
+        <div class="leaf"><b>Neljä ruutua valehtelee tasapainoa.</b> Yksi asia ratkaisee ja loput ovat tapettia.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="sosiaalinen" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">Neljäs vika: sosiaalinen vaara</span><span class="state" aria-hidden="true"></span></div>
+      <div class="leaves">
+        <div class="leaf">Viisi kuudesta kirjoittaa lapulle <b>"myynti on heikkoutemme"</b> – ja myyntijohtaja istuu samassa pöydässä.</div>
+        <div class="leaf">"Kehu julkisesti, kritisoi yksityisesti" ei voi toimia menetelmässä, joka kerää kritiikin fläppitaululle kaikkien nähden.</div>
+        <div class="leaf">Repivä avaus voi maksaa koko syksyn strategiatyön ilmapiirin.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="judo" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">Judoheitto: kerää muualla, käsittele nelikentässä</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Nelikenttä siirretään tehtävään, johon se sopii. Viesti asiakkaalle
+        ei ole "olet väärässä" vaan "tämä vaatii yhden asian ennen käyttöä".</p>
+      <div class="leaves">
+        <div class="leaf">Kerää näkemykset <b>ennen</b> työpajaa – kirjallisesti, yksityisesti. (Ratkaisee oksan 3 samalla.)</div>
+        <div class="leaf own">Jokainen merkitsee omiin kohtiinsa: <b>uskomus vai todistettu?</b></div>
+        <div class="leaf">Moni huomaa jo kirjoittaessaan, ettei vahvimmalle mielipiteelle löydy näyttöä.</div>
+        <div class="leaf">SWOT on yrityksen <b>Rorschach-testi</b>: tulos kertoo katsojista. Siksi se kannattaa teettää.
+          <div class="twig">
+            <div>todistettu → strategiatyöhön</div>
+            <div>uskomukset → kertovat, minkä varassa taloa oikeasti johdetaan</div>
+          </div>
         </div>
+        <div class="leaf">Rinnalle koneen analyysi julkisista lähteistä (oksa 5 avaa).</div>
+        <div class="leaf">Nelikenttä vasta <b>käsittelyvaiheen formaattina</b> – jaettu lukutaito: jokainen johtoryhmä ja hallitus lukee sen ilman perehdytystä.
+          <div class="twig"><div>työpaja fasilitoidaan yhteiseen tulkintaan ja päätöksiin</div></div>
+        </div>
+        <div class="leaf">Käsittelyvaiheessa nelikenttä on sosiaalisesti turvallinen, koska kritiikki on kerätty jo etukäteen.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="missing-history" style="--bc:var(--petrol)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">The missing archive</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Women are everywhere in literature and strangely hard to find in conventional history.</p>
+    <article class="branch" data-branch-id="agenttikaanne" style="--bc:var(--wine)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">Koneen SWOT rinnalle</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Artikkelin uutuusarvo – mahdollista vasta parin vuoden ajan.</p>
       <div class="leaves">
-        <div class="leaf">Female characters dominate poems and plays while the lives of actual women barely appear in the histories on the library shelves.</div>
-        <div class="leaf">Woolf asks for the missing facts of ordinary life: education, marriage, children, work, domestic routines, money and private space.</div>
-        <div class="leaf">An empty archive cannot prove an absence of ability. It may instead record whose experience institutions considered worth preserving.</div>
-        <div class="leaf">Judith Shakespeare, an imagined sister with her brother's talent, receives none of his education, freedom or theatrical opportunity.</div>
-        <div class="leaf highlight">The thought experiment changes the question from “Why was there no female Shakespeare?” to “What conditions made her career impossible?”</div>
+        <div class="leaf">Agentti tekee saman SWOTin <b>pelkistä julkisista lähteistä</b>: verkkosivut, tilinpäätökset, rekryt, asiakaskommentit. Tunneissa, ilman yhtään luottamuksellista dokumenttia.</div>
+        <div class="leaf">Huoneen näkemykset + koneen analyysi <b>vierekkäin, samaan nelikenttään</b> → erotus on koko harjoituksen tulos.
+          <div class="twig">
+            <div>ero = sokea piste tai vahvuus, josta ette ole kertoneet kenellekään</div>
+          </div>
+        </div>
+        <div class="leaf">Sama temppu toiseen suuntaan: <b>kilpailijoiden SWOTit</b> käden käänteessä<div class="twig"><div>→ 90-luvun perusongelma sai muutaman tunnin vastalääkkeen (kaari sulkeutuu oksaan 1)</div></div></div>
+        <div class="leaf own">Kone voi sanoa sen, mitä kollega ei voi.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="tradition" style="--bc:var(--wine)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">A tradition women can inherit</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">A writer needs predecessors, examples and the knowledge that a writing life is possible.</p>
+    <article class="branch" data-branch-id="strategiakausi" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">Syksyn strategiakausi (CTA)</span><span class="state" aria-hidden="true"></span></div>
       <div class="leaves">
-        <div class="leaf">Early women writers often work in isolation, without training, audience, criticism or a socially acceptable model for authorship.</div>
-        <div class="leaf">Aphra Behn marks a practical turning point: earning money by the pen makes writing imaginable as work for other women.</div>
-        <div class="leaf">Jane Austen, the Brontës and George Eliot do not emerge alone. They inherit language and possibility from less celebrated predecessors.</div>
-        <div class="leaf">Woolf treats masterpieces as outcomes of long, shared traditions rather than miracles produced by isolated genius.</div>
-        <div class="leaf highlight">A literary tradition gives the individual writer something to continue, resist and transform.</div>
+        <div class="leaf">Strategiapäivät osuvat syys–lokakuuhun. Teetä koneen analyysi – omastanne ja kilpailijoista – <b>ennen omaa päiväänne</b>; se valmistuu tunneissa.</div>
+        <div class="leaf">Kuvat yhtenevät → omakuva terve. Eroavat → strategiapäivän keskustelun aloituskohta löytyi.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="scrutiny" style="--bc:var(--amber-700)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">Writing under scrutiny</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">The essay asks what happens when a writer must keep answering an external judgment.</p>
+    <article class="branch" data-branch-id="ps" style="--bc:var(--gray)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">7</span><span class="label">PS.</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Terävimmät havainnot loppuun.</p>
       <div class="leaves">
-        <div class="leaf">Ridicule, moral suspicion and prescribed gender roles consume attention that could have remained with the work itself.</div>
-        <div class="leaf">A writer may respond with anger, apology or imitation. Woolf argues that each response can pull the work away from its own centre.</div>
-        <div class="leaf">Critical values are not neutral: war is declared important while domestic experience is dismissed as trivial.</div>
-        <div class="leaf">Austen and Emily Brontë are praised for holding to the world as they saw it despite the pressure to adopt someone else's scale of value.</div>
-        <div class="leaf highlight">Freedom in writing means fidelity to one's vision, not freedom from history or feeling.</div>
-      </div>
-    </article>
-
-    <article class="branch" data-branch-id="undivided-mind" style="--bc:var(--petrol-700)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">The undivided mind</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Woolf's “androgynous mind” is an image of creative wholeness, expressed in the gender language of 1929.</p>
-      <div class="leaves">
-        <div class="leaf">The mind changes focus and can experience itself as divided by social opposition or restored to a more effortless unity.</div>
-        <div class="leaf">Woolf borrows a binary image of masculine and feminine elements cooperating within one person.</div>
-        <div class="leaf">The lasting creative claim is broader than that binary: a mind should be receptive, porous and able to use all its faculties.</div>
-        <div class="leaf">Writing that exists only to prove the superiority of one sex remains trapped inside the contest it opposes.</div>
-        <div class="leaf highlight">Creation asks for a mind open enough to transmit experience without constantly policing its own identity.</div>
-      </div>
-    </article>
-
-    <article class="branch" data-branch-id="future" style="--bc:var(--navy)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">7</span><span class="label">A future made by writing</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">The conclusion turns an individual room into a collective, unfinished project.</p>
-      <div class="leaves">
-        <div class="leaf">Woolf refuses to rank the sexes as if literature were a school competition with fixed prizes.</div>
-        <div class="leaf">She asks women to write every kind of book — not only fiction and not only subjects already considered suitable.</div>
-        <div class="leaf">Material independence enables intellectual freedom; intellectual freedom makes new forms of writing possible.</div>
-        <div class="leaf">The imagined sister of Shakespeare may live in the future through the work and opportunities created by many women.</div>
-        <div class="leaf highlight">The room is a beginning: private conditions make possible a larger public culture of thought and writing.</div>
+        <div class="leaf"><b>PS.</b> Rajaus julkisiin lähteisiin on tahallinen: luottamuksellista aineistoa ei viedä yleistyökaluun, ja kuvan pitää syntyä markkinan silmin.</div>
+        <div class="leaf"><b>PPS. (piikki, kärki neuvoksi)</b> Jos konsultti tuo strategiapäivään valmiin SWOT-pohjan, kysy yksi kysymys: mistä sisältö kerätään? Jos vastaus on "huoneesta", pyydä keruu kirjallisena etukäteen – pohjassa ei ole vikaa, keruutavassa on.</div>
       </div>
     </article>
   </section>
 
   <div class="legend">
-    <span><i style="background:var(--navy)"></i> How the essay thinks</span>
-    <span><i style="background:var(--slate)"></i> Money, rooms and institutions</span>
-    <span><i style="background:var(--petrol)"></i> The missing archive</span>
-    <span><i style="background:var(--wine)"></i> A tradition women can inherit</span>
-    <span><i style="background:var(--amber-700)"></i> Writing under scrutiny</span>
-    <span><i style="background:var(--petrol-700)"></i> The undivided mind</span>
-    <span><i style="background:var(--navy)"></i> A future made by writing</span>
+    <span><i style="background:var(--navy)"></i> Oma ankkuri: 90-luvulta asti</span>
+    <span><i style="background:var(--slate)"></i> Kolme rakenteellista vikaa</span>
+    <span><i style="background:var(--amber-700)"></i> Neljäs vika, josta ei puhuta: sosiaalinen vaara</span>
+    <span><i style="background:var(--petrol)"></i> Judoheitto: kerää muualla, käsittele nelikentässä</span>
+    <span><i style="background:var(--wine)"></i> Agenttikäänne: koneen SWOT rinnalle</span>
+    <span><i style="background:var(--petrol-700)"></i> Syksyn strategiakausi (CTA)</span>
+    <span><i style="background:var(--gray)"></i> PS-kerros</span>
   </div>
 </main>
 
