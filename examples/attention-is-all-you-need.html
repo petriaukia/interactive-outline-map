@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Attention Is All You Need — interactive outline map</title>
+<style>
+  :root{
+    --wine:#CC0033;--wine-50:#FDF1F4;
+    --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
+    --amber:#E3A130;--amber-700:#B97F1E;
+    --navy:#1C2333;--slate:#334155;--ink:#16181D;
+    --bg:#F4F5F7;--surface:#FFFFFF;--line:#E4E6EA;--trunk:#737B87;--gray:#666;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0 0 80px;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45}
+  .brandbar{height:18px;background:var(--navy)}
+  .brandline{height:3px;background:linear-gradient(90deg,var(--wine),var(--petrol) 55%,var(--amber))}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  header{padding:44px 0 10px}
+  .eyebrow{color:var(--wine);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+  h1{margin:.25em 0 .1em;color:var(--navy);font-size:clamp(24px,4vw,32px);text-wrap:balance}
+  .sub{max-width:70ch;margin:0;color:var(--gray);font-size:14px}
+  .sub a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
+  .tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0 0;
+    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  .hint{font-size:12.5px;color:var(--gray)}
+  .actions{display:flex;flex-wrap:wrap;gap:7px}
+  .actions button{appearance:none;padding:6px 10px;border:0;border-radius:6px;background:var(--navy);
+    color:#fff;font:700 11px/1.2 inherit;cursor:pointer;box-shadow:0 1px 2px rgba(22,24,29,.2)}
+  .actions button:hover{background:var(--petrol-700)}
+  .actions button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
+  .actions button:last-child{background:var(--amber);color:var(--navy)}
+  .root{position:relative;margin:30px 0 0;padding:20px 24px;border-radius:14px;background:var(--navy);color:#fff}
+  .root h2{margin:0;font-size:20px;letter-spacing:.01em}
+  .root p{margin:.35em 0 0;color:#C9CFDD;font-size:14px}
+  .trunk{margin-left:26px;padding:26px 0 0;border-left:3px solid var(--trunk)}
+  .branch{position:relative;margin:0 0 26px;padding-left:34px;transition:opacity .15s ease}
+  .branch::before{content:"";position:absolute;left:-3px;top:19px;width:34px;height:3px;background:var(--bc,var(--gray))}
+  .bhead{display:inline-flex;align-items:center;gap:10px;padding:7px 13px 7px 10px;
+    border:2px solid var(--bc,var(--gray));border-radius:999px;background:var(--surface);
+    color:var(--navy);font-size:15px;font-weight:700;cursor:grab;user-select:none}
+  .bhead::before{content:"";flex:0 0 12px;width:12px;height:16px;margin:0 3px 0 1px;
+    color:var(--gray);background-image:radial-gradient(circle at 2px 2px,currentColor 1.2px,transparent 1.35px);
+    background-size:4px 4px;background-repeat:repeat;opacity:.82;pointer-events:none}
+  .bhead::after{content:"−";display:flex;align-items:center;justify-content:center;width:18px;height:18px;
+    margin-left:2px;border-radius:50%;background:var(--bc,var(--gray));color:#fff;font-size:15px;line-height:1}
+  .bhead:active{cursor:grabbing}
+  .bhead:focus-visible{outline:3px solid color-mix(in srgb,var(--bc) 28%,transparent);outline-offset:3px}
+  .dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:var(--bc,var(--gray));color:#fff;font-size:12px;font-weight:800}
+  .bnote{max-width:60ch;margin:6px 0 0 6px;color:var(--gray);font-size:12.5px}
+  .branch.is-collapsed{margin-bottom:14px}
+  .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:none}
+  .branch.is-collapsed .bhead::after{content:"+"}
+  .branch.dragging{opacity:.28}
+  .branch.dragging .bhead{cursor:grabbing}
+  .leaves{--leaf-line:color-mix(in srgb,var(--bc) 45%,transparent);position:relative;
+    margin:12px 0 0 10px;padding-left:18px}
+  .leaves::before{content:"";position:absolute;left:0;top:0;width:2px;height:var(--guide-end,100%);
+    background:repeating-linear-gradient(to bottom,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf{position:relative;max-width:620px;margin:9px 0;padding:9px 14px;border:1px solid var(--line);
+    border-radius:10px;background:var(--surface);font-size:14px;box-shadow:0 1px 2px rgba(22,24,29,.05)}
+  .leaf::before{content:"";position:absolute;left:-20px;top:calc(50% - 1px);width:20px;height:2px;
+    background:repeating-linear-gradient(to right,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf b{color:var(--navy)}
+  .leaf.highlight{border:2px solid var(--wine);background:var(--wine-50)}
+  .leaf.highlight::after{content:"key idea";position:absolute;right:10px;top:-9px;padding:2px 8px;
+    border-radius:999px;background:var(--wine);color:#fff;font-size:10px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase}
+  .twig{margin:6px 0 2px 16px;padding-left:14px;border-left:2px dotted var(--line);color:#3D4148;font-size:13px}
+  .twig div{margin:4px 0}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
+  @media print{
+    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{padding-top:10mm}.tools{display:none}
+    .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.bhead::before,.bhead::after{display:none}
+  }
+</style>
+</head>
+<body data-map-key="attention-is-all-you-need-2017">
+<div class="brandbar"></div>
+<div class="brandline"></div>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Paper map · Vaswani et al. · NeurIPS 2017</div>
+    <h1>Attention Is All You Need</h1>
+    <p class="sub">A compact reading map of the paper that introduced the Transformer architecture. Based on the
+      <a href="https://papers.nips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">NeurIPS publication</a>
+      and its <a href="https://arxiv.org/abs/1706.03762">arXiv record</a>.</p>
+    <div class="tools" aria-label="Map controls">
+      <div class="hint"><b>Click</b> a heading to hide or restore a branch. <b>Drag</b> a heading to change the reading order.</div>
+      <div class="actions">
+        <button type="button" id="expand-all">Open all</button>
+        <button type="button" id="collapse-all">Hide all</button>
+        <button type="button" id="reset-order">Restore order</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="root">
+    <h2>Core claim: sequence transduction does not require recurrence or convolution</h2>
+    <p>The Transformer relies on attention to connect positions in a sequence, making training more parallelizable while improving machine-translation quality.</p>
+  </section>
+
+  <section class="trunk">
+    <article class="branch" data-branch-id="problem" style="--bc:var(--navy)">
+      <div class="bhead"><span class="dot">1</span> The problem with sequential models</div>
+      <p class="bnote">Why the authors looked beyond recurrent and convolutional sequence models.</p>
+      <div class="leaves">
+        <div class="leaf">RNNs and LSTMs process sequence positions step by step. That dependency limits parallel training, especially for long sequences.</div>
+        <div class="leaf">Convolutional alternatives allow more parallel work, but connecting distant positions requires paths that grow with sequence distance.</div>
+        <div class="leaf">Attention already helped encoder–decoder models, but it was normally attached to a recurrent network.</div>
+        <div class="leaf highlight">The proposal: make attention the primary mechanism instead of an accessory.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="architecture" style="--bc:var(--slate)">
+      <div class="bhead"><span class="dot">2</span> Transformer architecture</div>
+      <p class="bnote">The familiar encoder–decoder shape remains, but its internal machinery changes.</p>
+      <div class="leaves">
+        <div class="leaf">The encoder and decoder each use a stack of six layers in the paper’s base architecture.</div>
+        <div class="leaf">Each encoder layer combines multi-head self-attention with a position-wise feed-forward network.</div>
+        <div class="leaf">The decoder adds encoder–decoder attention and masks future positions so generation remains autoregressive.</div>
+        <div class="leaf">Residual connections and layer normalization wrap the sublayers.</div>
+        <div class="leaf">The base model uses:
+          <div class="twig"><div>model dimension d<sub>model</sub> = 512</div><div>feed-forward inner dimension d<sub>ff</sub> = 2048</div><div>six encoder and six decoder layers</div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="attention" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="dot">3</span> Attention mechanism</div>
+      <p class="bnote">Queries ask, keys match and values carry the information that is combined.</p>
+      <div class="leaves">
+        <div class="leaf highlight"><b>Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>)V</b></div>
+        <div class="leaf">Dividing the dot products by √d<sub>k</sub> keeps large values from pushing softmax into regions with very small gradients.</div>
+        <div class="leaf">Multi-head attention projects queries, keys and values into several learned representation spaces and runs attention in parallel.</div>
+        <div class="leaf">The paper uses eight heads in the base model, with 64 dimensions per head.</div>
+        <div class="leaf">Attention appears in three roles:
+          <div class="twig"><div>encoder self-attention</div><div>masked decoder self-attention</div><div>decoder attention over encoder outputs</div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="position" style="--bc:var(--wine)">
+      <div class="bhead"><span class="dot">4</span> Order without recurrence</div>
+      <p class="bnote">Attention alone does not know whether a token came first, last or somewhere in between.</p>
+      <div class="leaves">
+        <div class="leaf">The model adds positional encodings to token embeddings before the first encoder and decoder layers.</div>
+        <div class="leaf">The chosen encoding uses sine and cosine waves at different frequencies, giving each position a structured signal.</div>
+        <div class="leaf">Learned positional embeddings produced nearly identical results in the reported comparison.</div>
+        <div class="leaf highlight">Removing recurrence makes position information an explicit design choice.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="training" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="dot">5</span> Training and efficiency</div>
+      <p class="bnote">Parallel structure is valuable only if it translates into practical training gains.</p>
+      <div class="leaves">
+        <div class="leaf">Experiments use WMT 2014 English–German and English–French translation datasets.</div>
+        <div class="leaf">Training ran on one machine with eight NVIDIA P100 GPUs.</div>
+        <div class="leaf">The base models trained for 100,000 steps, approximately 12 hours; the larger models trained for 300,000 steps, approximately 3.5 days.</div>
+        <div class="leaf">The recipe also includes Adam, learning-rate warmup, residual dropout and label smoothing.</div>
+        <div class="leaf highlight">Self-attention reduces sequential operations per layer to a constant number, enabling substantially more parallel computation.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="results" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="dot">6</span> Results and significance</div>
+      <p class="bnote">What the 2017 experiments established — and what the title should not make us forget.</p>
+      <div class="leaves">
+        <div class="leaf">The big model reached 28.4 BLEU on WMT 2014 English–German, exceeding previously reported systems including ensembles.</div>
+        <div class="leaf">It reached 41.0 BLEU on English–French, beating prior published single models at a fraction of the training cost reported for the previous state of the art.</div>
+        <div class="leaf">The architecture also generalized to English constituency parsing in both large- and limited-data settings.</div>
+        <div class="leaf">“Attention is all you need” is a memorable thesis, not a literal inventory: the model also relies on embeddings, feed-forward networks, residual connections, normalization and positional information.</div>
+        <div class="leaf highlight">The enduring idea is architectural: global dependency modeling can be parallel, direct and effective.</div>
+      </div>
+    </article>
+  </section>
+
+  <div class="legend">
+    <span><i style="background:var(--navy)"></i> problem</span>
+    <span><i style="background:var(--slate)"></i> architecture</span>
+    <span><i style="background:var(--petrol)"></i> mechanism</span>
+    <span><i style="background:var(--wine)"></i> position</span>
+    <span><i style="background:var(--amber-700)"></i> training</span>
+    <span><i style="background:var(--petrol-700)"></i> results</span>
+  </div>
+</main>
+
+<script>
+(() => {
+  const trunk = document.querySelector('.trunk');
+  const storageKey = `interactive-outline-map:${document.body.dataset.mapKey || location.pathname}`;
+  const initialOrder = [...trunk.querySelectorAll('.branch')].map(branch => branch.dataset.branchId);
+  let dragging = null;
+  let suppressClick = false;
+  const branches = () => [...trunk.querySelectorAll('.branch')];
+
+  function sizeLeafGuides() {
+    branches().forEach(branch => {
+      const leaves = branch.querySelector('.leaves');
+      const lastLeaf = leaves && leaves.querySelector('.leaf:last-child');
+      if (!lastLeaf || !leaves.offsetHeight) return;
+      leaves.style.setProperty('--guide-end', `${lastLeaf.offsetTop + lastLeaf.offsetHeight / 2}px`);
+    });
+  }
+
+  function renumber() {
+    branches().forEach((branch, index) => branch.querySelector('.dot').textContent = String(index + 1));
+  }
+
+  function setCollapsed(branch, collapsed) {
+    branch.classList.toggle('is-collapsed', collapsed);
+    branch.querySelector('.bhead').setAttribute('aria-expanded', String(!collapsed));
+    requestAnimationFrame(sizeLeafGuides);
+  }
+
+  function save() {
+    const state = {
+      order: branches().map(branch => branch.dataset.branchId),
+      collapsed: branches().filter(branch => branch.classList.contains('is-collapsed')).map(branch => branch.dataset.branchId)
+    };
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function applyOrder(order) {
+    const byId = new Map(branches().map(branch => [branch.dataset.branchId, branch]));
+    order.forEach(id => {
+      const branch = byId.get(id);
+      if (branch) { trunk.appendChild(branch); byId.delete(id); }
+    });
+    byId.forEach(branch => trunk.appendChild(branch));
+    renumber();
+  }
+
+  branches().forEach(branch => {
+    const head = branch.querySelector('.bhead');
+    branch.draggable = true;
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', 'true');
+    head.setAttribute('title', 'Click: hide or restore · Drag: reorder');
+
+    head.addEventListener('click', () => {
+      if (suppressClick) return;
+      setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+      save();
+    });
+    head.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+      save();
+    });
+    head.addEventListener('mousedown', () => branch.dataset.dragReady = 'true');
+    branch.addEventListener('dragstart', event => {
+      if (branch.dataset.dragReady !== 'true') { event.preventDefault(); return; }
+      dragging = branch;
+      suppressClick = true;
+      branch.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', branch.dataset.branchId);
+    });
+    branch.addEventListener('dragend', () => {
+      branch.classList.remove('dragging');
+      delete branch.dataset.dragReady;
+      dragging = null;
+      renumber();
+      save();
+      setTimeout(() => suppressClick = false, 80);
+    });
+  });
+
+  document.addEventListener('mouseup', () => branches().forEach(branch => delete branch.dataset.dragReady));
+  trunk.addEventListener('dragover', event => {
+    if (!dragging) return;
+    event.preventDefault();
+    const siblings = branches().filter(branch => branch !== dragging);
+    const next = siblings.find(branch => {
+      const rect = branch.getBoundingClientRect();
+      return event.clientY < rect.top + rect.height / 2;
+    });
+    if (next) trunk.insertBefore(dragging, next); else trunk.appendChild(dragging);
+    renumber();
+  });
+  trunk.addEventListener('drop', event => event.preventDefault());
+  document.getElementById('expand-all').addEventListener('click', () => { branches().forEach(b => setCollapsed(b, false)); save(); });
+  document.getElementById('collapse-all').addEventListener('click', () => { branches().forEach(b => setCollapsed(b, true)); save(); });
+  document.getElementById('reset-order').addEventListener('click', () => { applyOrder(initialOrder); save(); });
+
+  try {
+    const state = JSON.parse(localStorage.getItem(storageKey));
+    if (state) {
+      if (Array.isArray(state.order)) applyOrder(state.order);
+      if (Array.isArray(state.collapsed)) branches().forEach(b => setCollapsed(b, state.collapsed.includes(b.dataset.branchId)));
+    }
+  } catch (_) {}
+  const guideObserver = 'ResizeObserver' in window ? new ResizeObserver(sizeLeafGuides) : null;
+  if (guideObserver) branches().forEach(branch => guideObserver.observe(branch.querySelector('.leaves')));
+  window.addEventListener('resize', sizeLeafGuides);
+  window.addEventListener('beforeprint', sizeLeafGuides);
+  sizeLeafGuides();
+  renumber();
+})();
+</script>
+</body>
+</html>

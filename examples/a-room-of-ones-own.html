@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>A Room of One's Own — interactive outline map</title>
+<style>
+  :root{
+    --wine:#CC0033;--wine-50:#FDF1F4;
+    --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
+    --amber:#E3A130;--amber-700:#B97F1E;
+    --navy:#1C2333;--slate:#334155;--ink:#16181D;
+    --bg:#F4F5F7;--surface:#FFFFFF;--line:#E4E6EA;--trunk:#737B87;--gray:#666;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0 0 80px;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45}
+  .brandbar{height:18px;background:var(--navy)}
+  .brandline{height:3px;background:linear-gradient(90deg,var(--wine),var(--petrol) 55%,var(--amber))}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  header{padding:44px 0 10px}
+  .eyebrow{color:var(--wine);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+  h1{margin:.25em 0 .1em;color:var(--navy);font-size:clamp(24px,4vw,32px);text-wrap:balance}
+  .sub{max-width:70ch;margin:0;color:var(--gray);font-size:14px}
+  .sub a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
+  .tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0 0;
+    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  .hint{font-size:12.5px;color:var(--gray)}
+  .actions{display:flex;flex-wrap:wrap;gap:7px}
+  .actions button{appearance:none;padding:6px 10px;border:0;border-radius:6px;background:var(--navy);
+    color:#fff;font:700 11px/1.2 inherit;cursor:pointer;box-shadow:0 1px 2px rgba(22,24,29,.2)}
+  .actions button:hover{background:var(--petrol-700)}
+  .actions button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
+  .actions button:last-child{background:var(--amber);color:var(--navy)}
+  .root{position:relative;margin:30px 0 0;padding:20px 24px;border-radius:14px;background:var(--navy);color:#fff}
+  .root h2{margin:0;font-size:20px;letter-spacing:.01em}
+  .root p{margin:.35em 0 0;color:#C9CFDD;font-size:14px}
+  .trunk{margin-left:26px;padding:26px 0 0;border-left:3px solid var(--trunk)}
+  .branch{position:relative;margin:0 0 26px;padding-left:34px;transition:opacity .15s ease}
+  .branch::before{content:"";position:absolute;left:-3px;top:19px;width:34px;height:3px;background:var(--bc,var(--gray))}
+  .bhead{display:inline-flex;align-items:center;gap:10px;padding:7px 13px 7px 10px;
+    border:2px solid var(--bc,var(--gray));border-radius:999px;background:var(--surface);
+    color:var(--navy);font-size:15px;font-weight:700;cursor:grab;user-select:none}
+  .bhead::before{content:"";flex:0 0 12px;width:12px;height:16px;margin:0 3px 0 1px;
+    color:var(--gray);background-image:radial-gradient(circle at 2px 2px,currentColor 1.2px,transparent 1.35px);
+    background-size:4px 4px;background-repeat:repeat;opacity:.82;pointer-events:none}
+  .bhead::after{content:"−";display:flex;align-items:center;justify-content:center;width:18px;height:18px;
+    margin-left:2px;border-radius:50%;background:var(--bc,var(--gray));color:#fff;font-size:15px;line-height:1}
+  .bhead:active{cursor:grabbing}
+  .bhead:focus-visible{outline:3px solid color-mix(in srgb,var(--bc) 28%,transparent);outline-offset:3px}
+  .dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:var(--bc,var(--gray));color:#fff;font-size:12px;font-weight:800}
+  .bnote{max-width:60ch;margin:6px 0 0 6px;color:var(--gray);font-size:12.5px}
+  .branch.is-collapsed{margin-bottom:14px}
+  .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:none}
+  .branch.is-collapsed .bhead::after{content:"+"}
+  .branch.dragging{opacity:.28}
+  .branch.dragging .bhead{cursor:grabbing}
+  .leaves{--leaf-line:color-mix(in srgb,var(--bc) 45%,transparent);position:relative;
+    margin:12px 0 0 10px;padding-left:18px}
+  .leaves::before{content:"";position:absolute;left:0;top:0;width:2px;height:var(--guide-end,100%);
+    background:repeating-linear-gradient(to bottom,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf{position:relative;max-width:620px;margin:9px 0;padding:9px 14px;border:1px solid var(--line);
+    border-radius:10px;background:var(--surface);font-size:14px;box-shadow:0 1px 2px rgba(22,24,29,.05)}
+  .leaf::before{content:"";position:absolute;left:-20px;top:calc(50% - 1px);width:20px;height:2px;
+    background:repeating-linear-gradient(to right,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf b{color:var(--navy)}
+  .leaf.highlight{border:2px solid var(--wine);background:var(--wine-50)}
+  .leaf.highlight::after{content:"key idea";position:absolute;right:10px;top:-9px;padding:2px 8px;
+    border-radius:999px;background:var(--wine);color:#fff;font-size:10px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase}
+  .twig{margin:6px 0 2px 16px;padding-left:14px;border-left:2px dotted var(--line);color:#3D4148;font-size:13px}
+  .twig div{margin:4px 0}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
+  @media print{
+    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{padding-top:10mm}.tools{display:none}
+    .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.bhead::before,.bhead::after{display:none}
+  }
+</style>
+</head>
+<body data-map-key="a-room-of-ones-own-1929">
+<div class="brandbar"></div>
+<div class="brandline"></div>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Essay map · Virginia Woolf · 1929</div>
+    <h1>A Room of One's Own</h1>
+    <p class="sub">A reading map of Woolf's argument about women, fiction and the material conditions of intellectual freedom.
+      Based on the <a href="https://www.gutenberg.ca/ebooks/woolfv-aroomofonesown/woolfv-aroomofonesown-00-h.html">Project Gutenberg Canada edition</a>.
+      This map paraphrases the essay; the linked edition notes that copyright status varies by country.</p>
+    <div class="tools" aria-label="Map controls">
+      <div class="hint"><b>Click</b> a heading to hide or restore a branch. <b>Drag</b> a heading to change the reading order.</div>
+      <div class="actions">
+        <button type="button" id="expand-all">Open all</button>
+        <button type="button" id="collapse-all">Hide all</button>
+        <button type="button" id="reset-order">Restore order</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="root">
+    <h2>Core claim: intellectual freedom rests on material conditions</h2>
+    <p>To write freely, a woman needs dependable income, private space, education, time and a tradition she can inherit. The room is both literal and structural.</p>
+  </section>
+
+  <section class="trunk">
+    <article class="branch" data-branch-id="method" style="--bc:var(--navy)">
+      <div class="bhead"><span class="dot">1</span> How the essay thinks</div>
+      <p class="bnote">Woolf offers a route through the question, not a final verdict handed down from above.</p>
+      <div class="leaves">
+        <div class="leaf">The commission — “women and fiction” — immediately opens into several questions: women as writers, women as subjects and the relation between the two.</div>
+        <div class="leaf">Instead of pretending to deliver a neutral conclusion, Woolf exposes the path by which she reaches one limited opinion.</div>
+        <div class="leaf">The narrator and the colleges are deliberately fictional constructions. Fiction becomes a way to test where truth might be found.</div>
+        <div class="leaf">Meals, interruptions, streets, books and money enter the argument because thought happens inside daily life.</div>
+        <div class="leaf highlight">The method mirrors the thesis: readers receive a train of thought they can examine, not an authority they must obey.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="conditions" style="--bc:var(--slate)">
+      <div class="bhead"><span class="dot">2</span> Money, rooms and institutions</div>
+      <p class="bnote">Creative freedom is built — or withheld — through ordinary material arrangements.</p>
+      <div class="leaves">
+        <div class="leaf">At Oxbridge, the narrator is directed off the grass and refused entry to a library. Rules decide whose thought may move without interruption.</div>
+        <div class="leaf">The lavish men's college and the poor women's college are contrasted through food, buildings and accumulated endowments.</div>
+        <div class="leaf">Wealth compounds across generations. Institutions founded later, by people unable to own or earn much, begin from a different base.</div>
+        <div class="leaf">An inheritance gives the narrator independence from work chosen only to survive and from the need to flatter male approval.</div>
+        <div class="leaf highlight">A private room and reliable income are not decorations around writing; they create the power to think for oneself.</div>
+        <div class="leaf">The room stands for several connected conditions:
+          <div class="twig"><div>time that can be protected</div><div>privacy and a door that closes</div><div>economic independence</div><div>access to education and books</div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="missing-history" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="dot">3</span> The missing archive</div>
+      <p class="bnote">Women are everywhere in literature and strangely hard to find in conventional history.</p>
+      <div class="leaves">
+        <div class="leaf">Female characters dominate poems and plays while the lives of actual women barely appear in the histories on the library shelves.</div>
+        <div class="leaf">Woolf asks for the missing facts of ordinary life: education, marriage, children, work, domestic routines, money and private space.</div>
+        <div class="leaf">An empty archive cannot prove an absence of ability. It may instead record whose experience institutions considered worth preserving.</div>
+        <div class="leaf">Judith Shakespeare, an imagined sister with her brother's talent, receives none of his education, freedom or theatrical opportunity.</div>
+        <div class="leaf highlight">The thought experiment changes the question from “Why was there no female Shakespeare?” to “What conditions made her career impossible?”</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="tradition" style="--bc:var(--wine)">
+      <div class="bhead"><span class="dot">4</span> A tradition women can inherit</div>
+      <p class="bnote">A writer needs predecessors, examples and the knowledge that a writing life is possible.</p>
+      <div class="leaves">
+        <div class="leaf">Early women writers often work in isolation, without training, audience, criticism or a socially acceptable model for authorship.</div>
+        <div class="leaf">Aphra Behn marks a practical turning point: earning money by the pen makes writing imaginable as work for other women.</div>
+        <div class="leaf">Jane Austen, the Brontës and George Eliot do not emerge alone. They inherit language and possibility from less celebrated predecessors.</div>
+        <div class="leaf">Woolf treats masterpieces as outcomes of long, shared traditions rather than miracles produced by isolated genius.</div>
+        <div class="leaf highlight">A literary tradition gives the individual writer something to continue, resist and transform.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="scrutiny" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="dot">5</span> Writing under scrutiny</div>
+      <p class="bnote">The essay asks what happens when a writer must keep answering an external judgment.</p>
+      <div class="leaves">
+        <div class="leaf">Ridicule, moral suspicion and prescribed gender roles consume attention that could have remained with the work itself.</div>
+        <div class="leaf">A writer may respond with anger, apology or imitation. Woolf argues that each response can pull the work away from its own centre.</div>
+        <div class="leaf">Critical values are not neutral: war is declared important while domestic experience is dismissed as trivial.</div>
+        <div class="leaf">Austen and Emily Brontë are praised for holding to the world as they saw it despite the pressure to adopt someone else's scale of value.</div>
+        <div class="leaf highlight">Freedom in writing means fidelity to one's vision, not freedom from history or feeling.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="undivided-mind" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="dot">6</span> The undivided mind</div>
+      <p class="bnote">Woolf's “androgynous mind” is an image of creative wholeness, expressed in the gender language of 1929.</p>
+      <div class="leaves">
+        <div class="leaf">The mind changes focus and can experience itself as divided by social opposition or restored to a more effortless unity.</div>
+        <div class="leaf">Woolf borrows a binary image of masculine and feminine elements cooperating within one person.</div>
+        <div class="leaf">The lasting creative claim is broader than that binary: a mind should be receptive, porous and able to use all its faculties.</div>
+        <div class="leaf">Writing that exists only to prove the superiority of one sex remains trapped inside the contest it opposes.</div>
+        <div class="leaf highlight">Creation asks for a mind open enough to transmit experience without constantly policing its own identity.</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="future" style="--bc:var(--navy)">
+      <div class="bhead"><span class="dot">7</span> A future made by writing</div>
+      <p class="bnote">The conclusion turns an individual room into a collective, unfinished project.</p>
+      <div class="leaves">
+        <div class="leaf">Woolf refuses to rank the sexes as if literature were a school competition with fixed prizes.</div>
+        <div class="leaf">She asks women to write every kind of book — not only fiction and not only subjects already considered suitable.</div>
+        <div class="leaf">Material independence enables intellectual freedom; intellectual freedom makes new forms of writing possible.</div>
+        <div class="leaf">The imagined sister of Shakespeare may live in the future through the work and opportunities created by many women.</div>
+        <div class="leaf highlight">The room is a beginning: private conditions make possible a larger public culture of thought and writing.</div>
+      </div>
+    </article>
+  </section>
+
+  <div class="legend">
+    <span><i style="background:var(--navy)"></i> method</span>
+    <span><i style="background:var(--slate)"></i> conditions</span>
+    <span><i style="background:var(--petrol)"></i> history</span>
+    <span><i style="background:var(--wine)"></i> tradition</span>
+    <span><i style="background:var(--amber-700)"></i> scrutiny</span>
+    <span><i style="background:var(--petrol-700)"></i> mind</span>
+    <span><i style="background:var(--navy)"></i> future</span>
+  </div>
+</main>
+
+<script>
+(() => {
+  const trunk = document.querySelector('.trunk');
+  const storageKey = `interactive-outline-map:${document.body.dataset.mapKey || location.pathname}`;
+  const initialOrder = [...trunk.querySelectorAll('.branch')].map(branch => branch.dataset.branchId);
+  let dragging = null;
+  let suppressClick = false;
+  const branches = () => [...trunk.querySelectorAll('.branch')];
+
+  function sizeLeafGuides() {
+    branches().forEach(branch => {
+      const leaves = branch.querySelector('.leaves');
+      const lastLeaf = leaves && leaves.querySelector('.leaf:last-child');
+      if (!lastLeaf || !leaves.offsetHeight) return;
+      leaves.style.setProperty('--guide-end', `${lastLeaf.offsetTop + lastLeaf.offsetHeight / 2}px`);
+    });
+  }
+
+  function renumber() {
+    branches().forEach((branch, index) => branch.querySelector('.dot').textContent = String(index + 1));
+  }
+
+  function setCollapsed(branch, collapsed) {
+    branch.classList.toggle('is-collapsed', collapsed);
+    branch.querySelector('.bhead').setAttribute('aria-expanded', String(!collapsed));
+    requestAnimationFrame(sizeLeafGuides);
+  }
+
+  function save() {
+    const state = {
+      order: branches().map(branch => branch.dataset.branchId),
+      collapsed: branches().filter(branch => branch.classList.contains('is-collapsed')).map(branch => branch.dataset.branchId)
+    };
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function applyOrder(order) {
+    const byId = new Map(branches().map(branch => [branch.dataset.branchId, branch]));
+    order.forEach(id => {
+      const branch = byId.get(id);
+      if (branch) { trunk.appendChild(branch); byId.delete(id); }
+    });
+    byId.forEach(branch => trunk.appendChild(branch));
+    renumber();
+  }
+
+  branches().forEach(branch => {
+    const head = branch.querySelector('.bhead');
+    branch.draggable = true;
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', 'true');
+    head.setAttribute('title', 'Click: hide or restore · Drag: reorder');
+
+    head.addEventListener('click', () => {
+      if (suppressClick) return;
+      setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+      save();
+    });
+    head.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+      save();
+    });
+    head.addEventListener('mousedown', () => branch.dataset.dragReady = 'true');
+    branch.addEventListener('dragstart', event => {
+      if (branch.dataset.dragReady !== 'true') { event.preventDefault(); return; }
+      dragging = branch;
+      suppressClick = true;
+      branch.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', branch.dataset.branchId);
+    });
+    branch.addEventListener('dragend', () => {
+      branch.classList.remove('dragging');
+      delete branch.dataset.dragReady;
+      dragging = null;
+      renumber();
+      save();
+      setTimeout(() => suppressClick = false, 80);
+    });
+  });
+
+  document.addEventListener('mouseup', () => branches().forEach(branch => delete branch.dataset.dragReady));
+  trunk.addEventListener('dragover', event => {
+    if (!dragging) return;
+    event.preventDefault();
+    const siblings = branches().filter(branch => branch !== dragging);
+    const next = siblings.find(branch => {
+      const rect = branch.getBoundingClientRect();
+      return event.clientY < rect.top + rect.height / 2;
+    });
+    if (next) trunk.insertBefore(dragging, next); else trunk.appendChild(dragging);
+    renumber();
+  });
+  trunk.addEventListener('drop', event => event.preventDefault());
+  document.getElementById('expand-all').addEventListener('click', () => { branches().forEach(b => setCollapsed(b, false)); save(); });
+  document.getElementById('collapse-all').addEventListener('click', () => { branches().forEach(b => setCollapsed(b, true)); save(); });
+  document.getElementById('reset-order').addEventListener('click', () => { applyOrder(initialOrder); save(); });
+
+  try {
+    const state = JSON.parse(localStorage.getItem(storageKey));
+    if (state) {
+      if (Array.isArray(state.order)) applyOrder(state.order);
+      if (Array.isArray(state.collapsed)) branches().forEach(b => setCollapsed(b, state.collapsed.includes(b.dataset.branchId)));
+    }
+  } catch (_) {}
+  const guideObserver = 'ResizeObserver' in window ? new ResizeObserver(sizeLeafGuides) : null;
+  if (guideObserver) branches().forEach(branch => guideObserver.observe(branch.querySelector('.leaves')));
+  window.addEventListener('resize', sizeLeafGuides);
+  window.addEventListener('beforeprint', sizeLeafGuides);
+  sizeLeafGuides();
+  renumber();
+})();
+</script>
+</body>
+</html>

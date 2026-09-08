@@ -1,0 +1,5 @@
+interface:
+  display_name: "Interactive Outline Map"
+  short_description: "Turn long or overworked ideas into writable maps"
+  brand_color: "#107C82"
+  default_prompt: "Use $interactive-outline-map to turn this long or over-iterated material into a map I can understand and write from in my own voice."
