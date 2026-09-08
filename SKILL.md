@@ -25,12 +25,11 @@ Use this when an idea has been discussed or iterated with an LLM until the accum
 - Preserve phrases the user identifies as their own or wants kept verbatim, and distinguish them visually from connective notes.
 - Keep disagreements, uncertainty, and alternative structures visible instead of smoothing them into one synthetic narrative.
 
-Success means the user can close the map and explain the material or write about it without copying the map sentence by sentence.
-
 ## Structure the material
 
 - Put the main proposition or purpose in the root block.
 - Use top-level branches for the major parts of the argument, process, or narrative.
+- Keep interaction at the first outliner tier: top-level branches can be reordered and collapsed, while leaves and twigs remain content rather than independently manipulated objects.
 - Use leaves for individual claims, observations, decisions, or actions.
 - Use twigs only for genuine supporting detail; avoid deep nesting that makes the page hard to scan.
 - Treat the current top-to-bottom branch order as meaningful. Renumber branches after reordering.
