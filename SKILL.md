@@ -51,6 +51,30 @@ Every leaf is plain by default. Four classes name a kind, and each draws its own
 | `leaf question` | open question | a tension, an unresolved decision, a gap |
 | `leaf own` | your words | wording the user has supplied and wants kept; wine and italic, the strongest mark the page has |
 
+### Deciding which words are the user's
+
+The prohibition above is easy to state and easy to break, because a model has no
+native sense of who wrote what. Use the test, not your judgement.
+
+1. **The source test.** In recovery mode the input is a conversation. A phrase is
+   the user's if it appears in a turn the user wrote — their message, a draft
+   they pasted, a transcript of them speaking. A phrase from an assistant turn is
+   not theirs, however the idea originated.
+2. **Approval is not authorship.** "That's good, keep that" makes a sentence
+   approved, not written. An approved sentence is at most a `leaf highlight`.
+   This is where the rule is broken in practice, because approval feels like a
+   handover.
+3. **The edit limit.** Case, punctuation and truncation preserve authorship.
+   Changing a word does not. If you altered the wording, the leaf is plain.
+4. **The default is none.** With no conversation to draw on — a fresh brief, a
+   document to compress — a map carries **zero** `own` leaves. An absent class is
+   the normal result, not a gap to fill. Most maps have none.
+5. **Ask rather than guess.** When the line is unclear, list the candidates and
+   ask which are the user's. One question costs less than one wrong attribution.
+6. **Name them on delivery.** Say which leaves you marked `own` and where each
+   came from, so the user can overrule you before the words reach their piece
+   under their name.
+
 ## Build the artifact
 
 Produce one offline-capable HTML file with its CSS and JavaScript embedded. Do not add CDNs, remote fonts, frameworks, analytics, network calls, or build tooling unless the user asks for them.
@@ -88,7 +112,7 @@ For an existing HTML map, edit the exact file only when the user asks; otherwise
 - Make global action buttons visibly different from branch headings.
 - Render the drag affordance as a true dot grid with three columns and four rows, using even spacing; do not imitate it with font glyphs.
 - Give horizontal and vertical leaf connectors the same broken-line rhythm and stroke weight. End each branch guide exactly at the center of its final leaf.
-- Use color as a navigation cue, not as decoration on every element. A leaf kind is drawn in its own colour: wine, petrol, amber and slate for the four kinds.
+- Use color as a navigation cue, not as decoration on every element. Each leaf kind has its own colour: wine for the user's words, navy for a key idea, petrol for a traceable source, amber for an open question.
 - Avoid nonfunctional menus, window controls, or other elements that look interactive.
 - Keep the root, branch, leaf, and twig levels visually distinct even in grayscale.
 - If a retro or branded treatment reduces legibility, retain it only as a restrained accent.
