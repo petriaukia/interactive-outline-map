@@ -82,12 +82,13 @@
   .leaf::before{content:"";position:absolute;left:-20px;top:calc(50% - 1px);width:20px;height:2px;
     background:repeating-linear-gradient(to right,var(--leaf-line) 0 4px,transparent 4px 8px)}
   .leaf b{color:var(--navy)}
-  .leaf.highlight{--kind:var(--wine);border:2px solid var(--wine);background:var(--wine-50)}
+  .leaf.highlight{--kind:var(--navy);border:2px solid var(--navy);background:var(--navy-50)}
   .leaf.source{--kind:var(--petrol);border:2px solid var(--petrol);background:var(--petrol-50)}
   .leaf.question{--kind:var(--amber-700);border:2px solid var(--amber-700);background:var(--amber-50)}
-  /* The user's own words carry the heaviest mark on the page: this is the one
-     kind whose wording is not the map maker's to touch. */
-  .leaf.own{--kind:var(--navy);border:2px solid var(--navy);background:var(--navy-50);font-style:italic}
+  /* Wine means one thing on this page: these words are the writer's own.
+     It is the strongest mark the palette has, and it is not the map maker's
+     to hand to a sentence they wrote themselves. */
+  .leaf.own{--kind:var(--wine);border:2px solid var(--wine);background:var(--wine-50);font-style:italic}
   .leaf.highlight::after,.leaf.source::after,.leaf.question::after,.leaf.own::after{
     position:absolute;right:10px;top:-9px;padding:2px 8px;border-radius:999px;background:var(--kind);
     color:#fff;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -115,7 +116,7 @@
 <div class="brandline"></div>
 <main class="wrap">
   <header>
-    <div class="eyebrow">Ready but for the writing</div>
+    <div class="eyebrow">Just write it!</div>
     <h1>Replace the map title</h1>
     <p class="sub">Replace this with one line on what the map helps the reader see.</p>
     <div class="tools" aria-label="Map controls">

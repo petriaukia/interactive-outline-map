@@ -42,12 +42,14 @@ Use this when an idea has been discussed or iterated with an LLM until the accum
 
 Every leaf is plain by default. Four classes name a kind, and each draws its own node colour and a small caps flag. Do not invent a fifth kind or add ad hoc styling to a leaf.
 
+**Wine means one thing on the page: these words are the writer's own.** It is the strongest colour the palette has, and `leaf own` is the only kind that carries it. A key idea is your judgement about the material and is drawn in navy; a sentence you wrote is never wine, because wine is the reader's signal that a human, not a model, chose those words.
+
 | Class | Flag | Use for |
 |---|---|---|
 | `leaf highlight` | key idea | the one claim the branch rests on |
 | `leaf source` | from the source | a quotation, figure or number that must stay traceable, with its locator |
 | `leaf question` | open question | a tension, an unresolved decision, a gap |
-| `leaf own` | your words | wording the user has supplied and wants kept; the heaviest mark on the page, in navy and italic |
+| `leaf own` | your words | wording the user has supplied and wants kept; wine and italic, the strongest mark the page has |
 
 ## Build the artifact
 
@@ -58,7 +60,7 @@ For a new map:
 1. Copy the template to a descriptive output filename in the working directory.
 2. Replace all sample content: the page title, the root, branch labels, notes, leaves, and `data-map-key`. **`data-map-key` must be replaced** — while the placeholder is in place, every map in the same browser shares one storage key.
 3. Give every top-level branch a stable, unique ASCII `data-branch-id`. Do not derive identity from the visible sequence number.
-4. Set the eyebrow to name **what stage the map is at**, not what the map is. A map is the point where the planning stops and the work starts, and the eyebrow is where that is said. The template's default is *Ready but for the writing*; a document map may instead name its source (*Paper map · Vaswani et al. · NeurIPS 2017*). Do not spend the eyebrow, the title and a subtitle on explaining how the page works — the page shows that by itself.
+4. Set the eyebrow to name **what stage the map is at**, not what the map is. A map is the point where the planning stops and the work starts, and the eyebrow is where that is said. The template's default is *Just write it!* — a nudge, because a map that is finished is a page that is not yet written; a document map may instead name its source (*Paper map · Vaswani et al. · NeurIPS 2017*). Do not spend the eyebrow, the title and a subtitle on explaining how the page works — the page shows that by itself.
 5. **Write the whole page in the user’s language**, chrome included: `<html lang>`, `<title>`, the `.eyebrow`, the `.hint`, the four button labels and the `aria-label` on `.tools`. The strings owned by the CSS and the script are overridden without touching either:
    - flags: `:root{--flag-key-idea:"ydinlause";--flag-source:"lähteestä";--flag-question:"avoin kysymys";--flag-own:"omin sanoin"}`
    - script strings, as attributes on `<body>`: `data-heading-hint`, `data-node-hint`, `data-hidden-label` (`"{n} kätkettyä"`), `data-move-status` (`"Haara {n}/{total}"`), `data-copied-label`, `data-copy-failed-label`.
