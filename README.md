@@ -2,6 +2,8 @@
 
 An experimental agent skill for turning long documents and over-iterated ideas into self-contained interactive HTML maps you can understand, rearrange and write from.
 
+**[Source on GitHub](https://github.com/petriaukia/interactive-outline-map)** · [the skill](https://github.com/petriaukia/interactive-outline-map/blob/main/SKILL.md) · [the template](https://github.com/petriaukia/interactive-outline-map/blob/main/assets/template.html) · MIT
+
 ## Why this exists
 
 LLMs are good at expanding an idea, challenging it and producing one more polished iteration. After enough rounds, that fluency becomes a trap: the conversation contains so much finished-sounding prose that writing the piece yourself is suddenly harder than it was at the beginning. The easy next step is to share the model’s text. Your own voice quietly disappears from the process.
@@ -98,4 +100,4 @@ Early and usable. The single-file template deliberately has no framework, remote
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/petriaukia/interactive-outline-map/blob/main/LICENSE)
