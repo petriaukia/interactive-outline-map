@@ -15,7 +15,7 @@ The skill has two primary uses:
 1. **Understand a long document.** Compress a paper, report or other source into a map that preserves its reasoning, evidence, qualifications and relationships.
 2. **Recover your own writing path.** Take an idea that has been iterated with an LLM and strip away the false finality of generated prose, leaving a structure you can use to write the piece in your own style.
 
-Success is not a text ready to publish. Success is being able to close the map and explain or write the material without copying it sentence by sentence.
+I've intentionally limited this experimental skill to the first tier of an outliner. The point is to get you writing, not to pull you into the minutiae of outlining.
 
 The generated maps are designed for thinking and editing rather than presentation alone:
 
