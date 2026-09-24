@@ -4,7 +4,7 @@ An experimental agent skill for turning long documents and over-iterated ideas i
 
 **[Source on GitHub](https://github.com/petriaukia/interactive-outline-map)** · [the skill](https://github.com/petriaukia/interactive-outline-map/blob/main/SKILL.md) · [the template](https://github.com/petriaukia/interactive-outline-map/blob/main/assets/template.html) · MIT
 
-[![The top of a map of Virginia Woolf's essay: an eyebrow, the title, the controls, the core claim on a dark block, and the first branch with its leaves hanging off the trunk](assets/screenshot-a-room-of-ones-own.png)](https://petriaukia.github.io/interactive-outline-map/examples/a-room-of-ones-own.html)
+[![The top of a map of Virginia Woolf's essay: a heavy rule, the title and its source, the controls on one line, the core claim as the first node of the trunk, and the first branch with its leaves hanging off it](assets/screenshot-a-room-of-ones-own.png)](https://petriaukia.github.io/interactive-outline-map/examples/a-room-of-ones-own.html)
 
 *[A Room of One's Own](https://petriaukia.github.io/interactive-outline-map/examples/a-room-of-ones-own.html), mapped. Click a heading to fold a branch away, drag its node to reorder, and copy the result back out as an outline.*
 

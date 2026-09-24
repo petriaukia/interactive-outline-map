@@ -17,26 +17,32 @@
   body{margin:0;padding:0 0 80px;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.45}
-  .brandbar{height:18px;background:var(--navy)}
-  .brandline{height:3px;background:linear-gradient(90deg,var(--wine),var(--petrol) 55%,var(--amber))}
   .wrap{max-width:900px;margin:0 auto;padding:0 20px}
-  header{padding:44px 0 10px}
-  .eyebrow{color:var(--wine);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-  h1{margin:.25em 0 .1em;color:var(--navy);font-size:clamp(24px,4vw,32px);text-wrap:balance}
-  .sub{max-width:70ch;margin:0;color:var(--gray);font-size:14px}
-  .sub a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
-  .tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0 0;
-    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-  .hint{font-size:12.5px;color:var(--gray)}
-  .actions{display:flex;flex-wrap:wrap;gap:7px}
-  .actions button{appearance:none;padding:6px 10px;border:0;border-radius:6px;background:var(--navy);
-    color:#fff;font:700 11px/1.2 inherit;cursor:pointer;box-shadow:0 1px 2px rgba(22,24,29,.2)}
-  .actions button:hover{background:var(--petrol-700)}
+  /* One heavy rule frames the whole map; everything below it is ordered by
+     thin rules and space, so the root reads as the top of the tree rather
+     than as a block of its own. */
+  header{margin-top:48px;padding-top:18px;border-top:4px solid var(--navy)}
+  h1{margin:0;color:var(--navy);font-size:clamp(26px,5vw,38px);line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
+  .source{max-width:70ch;margin:8px 0 0;color:var(--gray);font-size:13px}
+  .source a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
+  .tools{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;margin:22px 0 0;
+    padding-top:12px;border-top:1px solid var(--trunk)}
+  .hint{font-size:12px;color:var(--gray)}
+  .hint b{color:var(--navy)}
+  .actions{display:flex;flex-wrap:wrap;gap:6px}
+  .actions button{appearance:none;padding:6px 11px;border:1.5px solid var(--navy);border-radius:0;background:transparent;
+    color:var(--navy);font:700 12px/1.2 inherit;cursor:pointer}
+  .actions button:hover{background:var(--navy-50)}
   .actions button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
-  .actions button.primary{background:var(--amber);color:var(--navy)}
-  .root{position:relative;margin:30px 0 0;padding:20px 24px;border-radius:14px;background:var(--navy);color:#fff}
-  .root h2{margin:0;font-size:20px;letter-spacing:.01em}
-  .root p{margin:.35em 0 0;color:#C9CFDD;font-size:14px}
+  .actions button.primary{background:var(--navy);color:#fff}
+  .actions button.primary:hover{background:var(--petrol-700);border-color:var(--petrol-700)}
+  /* The root is level zero of the outline: a node on the trunk, with the trunk
+     running on from it into the branches. */
+  .root{position:relative;margin:36px 0 0;padding:0 0 0 52px;color:var(--navy)}
+  .root::before{content:"";position:absolute;left:19px;top:7px;width:16px;height:16px;border-radius:50%;background:var(--navy)}
+  .root::after{content:"";position:absolute;left:26px;top:23px;bottom:0;width:2px;background:var(--trunk)}
+  .root h2{margin:0;font-size:24px;line-height:1.25;letter-spacing:-.005em}
+  .root p{margin:6px 0 0;color:var(--gray);font-size:14px}
   .trunk{margin-left:26px;padding:26px 0 0;border-left:2px solid var(--trunk)}
   .branch{position:relative;margin:0 0 26px;padding-left:34px;transition:opacity .15s ease}
   .branch::before{content:"";position:absolute;left:-2px;top:20px;width:34px;height:2px;background:var(--trunk)}
@@ -109,24 +115,33 @@
   .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
   .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
   .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
-  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
+  /* Type "more" to dress the page as the outliner this skill remembers: a
+     pinstriped title bar, a joined toolbar and hard shadows. Type it again to
+     leave. Nothing on the page advertises it. */
+  body.more header{border-top:0;padding-top:0}
+  body.more header::before{content:"";display:block;height:14px;margin-bottom:22px;border-bottom:2px solid var(--navy);
+    background:repeating-linear-gradient(to bottom,var(--navy) 0 1px,transparent 1px 3px)}
+  body.more .tools{border-top:0;padding-top:0;flex-direction:row-reverse;justify-content:flex-end}
+  body.more .actions{gap:0;border:2px solid var(--navy);background:var(--surface);box-shadow:4px 4px 0 0 var(--navy)}
+  body.more .actions button{border:0;border-right:2px solid var(--navy);padding:8px 13px}
+  body.more .actions button.primary{border-right:0;background:var(--amber);color:var(--navy)}
+  body.more .root{padding:20px 24px;border:2px solid var(--navy);background:var(--surface);box-shadow:6px 6px 0 0 var(--navy)}
+  body.more .root::before,body.more .root::after{display:none}
+  body.more .leaf,body.more .bhead,body.more .leaf::after{border-radius:0}
+  @media (max-width:640px){.tools,body.more .tools{align-items:flex-start;flex-direction:column}}
   @media print{
-    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{padding-top:10mm}.tools{display:none}
+    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{margin-top:6mm}.tools{display:none}
     .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.grip,.state{display:none}
     .branch[data-stack] .bhead{box-shadow:none}
   }
 </style>
 </head>
 <body data-map-key="example-outliner-linkedin-post" data-heading-hint="Napsauta piilottaaksesi tai palauttaaksesi · Vedä solmusta tai paina Alt ja nuolinäppäimiä järjestääksesi" data-node-hint="Vedä järjestääksesi" data-hidden-label="{n} kätkettyä" data-move-status="Haara {n}/{total}" data-copied-label="Kopioitu" data-copy-failed-label="Paina ⌘C">
-<div class="brandbar"></div>
-<div class="brandline"></div>
 <main class="wrap">
   <header>
-    <div class="eyebrow">Kirjoita se!</div>
     <h1>Outliner-postaus LinkedIniin</h1>
-    <p class="sub">Keskustelusta purettu runko, josta teksti kirjoitetaan omin sanoin.</p>
     <div class="tools" aria-label="Kartan ohjaimet">
-      <div class="hint"><b>Napsauta</b> otsikkoa piilottaaksesi tai palauttaaksesi haaran. <b>Vedä</b> solmusta tai paina <b>Alt</b> ja nuolinäppäimiä muuttaaksesi lukujärjestystä.</div>
+      <div class="hint"><b>Napsauta</b> otsikkoa taittaaksesi · <b>vedä</b> pisteistä tai paina <b>Alt</b>+nuolet järjestääksesi</div>
       <div class="actions">
         <button type="button" id="expand-all">Avaa kaikki</button>
         <button type="button" id="collapse-all">Piilota kaikki</button>
@@ -585,6 +600,20 @@
   window.addEventListener('resize', sizeLeafGuides);
   window.addEventListener('beforeprint', sizeLeafGuides);
   sizeLeafGuides();
+
+  /* The easter egg: typing m-o-r-e toggles the retro skin, and it is remembered. */
+  const MORE_KEY = 'interactive-outline-map:more';
+  try { if (localStorage.getItem(MORE_KEY) === '1') body.classList.add('more'); } catch (_) {}
+  let typed = '';
+  document.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.key.length !== 1) return;
+    typed = (typed + event.key.toLowerCase()).slice(-4);
+    if (typed !== 'more') return;
+    typed = '';
+    const on = body.classList.toggle('more');
+    try { localStorage.setItem(MORE_KEY, on ? '1' : '0'); } catch (_) {}
+    requestAnimationFrame(sizeLeafGuides);
+  });
 })();
 </script>
 </body>

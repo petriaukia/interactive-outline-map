@@ -13,7 +13,7 @@ fail=0
 report() { printf '%-8s %s\n' "$1" "$2"; [ "$1" = "FAIL" ] && fail=1; return 0; }
 
 # 1. Leftover template text
-if grep -qE 'Replace the map title|Replace this with one line|The main proposition or the purpose|first qualification' "$file"; then
+if grep -qE 'Replace the map title|Replace this with one line|its source and a link to it|The main proposition or the purpose|first qualification' "$file"; then
   report FAIL "sample text from the template is still in the file"
 else
   report ok "no leftover sample text"
