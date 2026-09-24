@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Outliner-postaus</title>
+<style>
+  :root{--flag-key-idea:"ydinlause";--flag-source:"lähteestä";--flag-question:"avoin kysymys";--flag-own:"omin sanoin";
+    --wine:#CC0033;--wine-50:#FDF1F4;--petrol-50:#EDF6F6;--amber-50:#FBF3E4;--navy-50:#EBEEF5;
+    --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
+    --amber:#E3A130;--amber-700:#B97F1E;
+    --navy:#1C2333;--slate:#334155;--ink:#16181D;
+    --bg:#F4F5F7;--surface:#FFFFFF;--line:#E4E6EA;--trunk:#9AA2AE;--gray:#666;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0 0 80px;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45}
+  .brandbar{height:18px;background:var(--navy)}
+  .brandline{height:3px;background:linear-gradient(90deg,var(--wine),var(--petrol) 55%,var(--amber))}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  header{padding:44px 0 10px}
+  .eyebrow{color:var(--wine);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+  h1{margin:.25em 0 .1em;color:var(--navy);font-size:clamp(24px,4vw,32px);text-wrap:balance}
+  .sub{max-width:70ch;margin:0;color:var(--gray);font-size:14px}
+  .sub a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
+  .tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0 0;
+    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  .hint{font-size:12.5px;color:var(--gray)}
+  .actions{display:flex;flex-wrap:wrap;gap:7px}
+  .actions button{appearance:none;padding:6px 10px;border:0;border-radius:6px;background:var(--navy);
+    color:#fff;font:700 11px/1.2 inherit;cursor:pointer;box-shadow:0 1px 2px rgba(22,24,29,.2)}
+  .actions button:hover{background:var(--petrol-700)}
+  .actions button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
+  .actions button.primary{background:var(--amber);color:var(--navy)}
+  .root{position:relative;margin:30px 0 0;padding:20px 24px;border-radius:14px;background:var(--navy);color:#fff}
+  .root h2{margin:0;font-size:20px;letter-spacing:.01em}
+  .root p{margin:.35em 0 0;color:#C9CFDD;font-size:14px}
+  .trunk{margin-left:26px;padding:26px 0 0;border-left:2px solid var(--trunk)}
+  .branch{position:relative;margin:0 0 26px;padding-left:34px;transition:opacity .15s ease}
+  .branch::before{content:"";position:absolute;left:-2px;top:20px;width:34px;height:2px;background:var(--trunk)}
+  .bhead{display:inline-flex;align-items:center;gap:10px;padding:7px 13px 7px 10px;
+    border:2px solid var(--bc,var(--gray));border-radius:999px;background:var(--surface);
+    color:var(--navy);font-size:15px;font-weight:700;cursor:pointer;user-select:none}
+  .grip{flex:0 0 12px;width:12px;height:16px;margin:0 3px 0 1px;
+    color:var(--gray);background-image:radial-gradient(circle at 2px 2px,currentColor 1.2px,transparent 1.35px);
+    background-size:4px 4px;background-repeat:repeat;opacity:.82;cursor:grab;touch-action:none}
+  .grip:active{cursor:grabbing}
+  /* The state control draws its sign instead of typesetting it, so the bar is
+     exactly on the centre of the circle in every font. */
+  .state{position:relative;flex:0 0 18px;width:18px;height:18px;margin-left:2px;border-radius:50%;
+    background:var(--bc,var(--gray))}
+  .state::before,.state::after{content:"";position:absolute;top:50%;left:50%;width:9px;height:2px;
+    margin:-1px 0 0 -4.5px;border-radius:1px;background:#fff}
+  .state::after{transform:rotate(90deg);opacity:0}
+  .branch.is-collapsed .state::after{opacity:1}
+  .bhead:focus-visible{outline:3px solid color-mix(in srgb,var(--bc) 28%,transparent);outline-offset:3px}
+  .dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:var(--bc,var(--gray));color:#fff;font-size:12px;font-weight:800}
+  .bnote{max-width:60ch;margin:6px 0 0 6px;color:var(--gray);font-size:12.5px}
+  .branch.is-collapsed{margin-bottom:14px}
+  .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:none}
+  /* What is folded away shows as cards stacked behind the pill: one card for a
+     single leaf, two for more. Drawn as hard-edged copies of the pill, so they
+     always sit behind it and follow its rounding. */
+  .branch[data-stack="1"] .bhead{
+    box-shadow:5px 5px 0 -2px var(--surface),5px 5px 0 0 var(--bc,var(--gray))}
+  .branch[data-stack="2"] .bhead{
+    box-shadow:5px 5px 0 -2px var(--surface),5px 5px 0 0 var(--bc,var(--gray)),
+               10px 10px 0 -2px var(--surface),10px 10px 0 0 var(--bc,var(--gray))}
+  .branch[data-stack="0"] .state{display:none}
+  .branch[data-stack="0"] .bhead{cursor:default}
+  .branch.dragging{opacity:.3}
+  .branch.dragging .bhead{cursor:grabbing}
+  .leaves{--leaf-line:color-mix(in srgb,var(--bc) 45%,transparent);position:relative;
+    margin:12px 0 0 10px;padding-left:18px}
+  .leaves::before{content:"";position:absolute;left:0;top:0;width:2px;height:var(--guide-end,calc(100% - 22px));
+    background:repeating-linear-gradient(to bottom,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf{position:relative;max-width:620px;margin:6px 0;padding:8px 13px;border:1px solid var(--line);
+    border-radius:8px;background:var(--surface);font-size:14px;box-shadow:0 1px 3px rgba(22,24,29,.08)}
+  .leaf::before{content:"";position:absolute;left:-20px;top:calc(50% - 1px);width:20px;height:2px;
+    background:repeating-linear-gradient(to right,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf b{color:var(--navy)}
+  .leaf.highlight{--kind:var(--navy);border:2px solid var(--navy);background:var(--navy-50)}
+  .leaf.source{--kind:var(--petrol);border:2px solid var(--petrol);background:var(--petrol-50)}
+  .leaf.question{--kind:var(--amber-700);border:2px solid var(--amber-700);background:var(--amber-50)}
+  /* Wine means one thing on this page: these words are the writer's own.
+     It is the strongest mark the palette has, and it is not the map maker's
+     to hand to a sentence they wrote themselves. */
+  .leaf.own{--kind:var(--wine);border:2px solid var(--wine);background:var(--wine-50);font-style:italic}
+  .leaf.highlight::after,.leaf.source::after,.leaf.question::after,.leaf.own::after{
+    position:absolute;right:10px;top:-9px;padding:2px 8px;border-radius:999px;background:var(--kind);
+    color:#fff;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .leaf.highlight::after{content:var(--flag-key-idea,"key idea")}
+  .leaf.source::after{content:var(--flag-source,"from the source")}
+  .leaf.question::after{content:var(--flag-question,"open question")}
+  .leaf.own::after{content:var(--flag-own,"your words")}
+  .twig{margin:6px 0 2px 16px;padding-left:14px;border-left:2px dotted var(--line);color:#3D4148;font-size:13px}
+  .twig div{margin:4px 0}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
+  @media print{
+    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{padding-top:10mm}.tools{display:none}
+    .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.grip,.state{display:none}
+    .branch[data-stack] .bhead{box-shadow:none}
+  }
+</style>
+</head>
+<body data-map-key="example-outliner-linkedin-post" data-heading-hint="Napsauta piilottaaksesi tai palauttaaksesi · Vedä solmusta tai paina Alt ja nuolinäppäimiä järjestääksesi" data-node-hint="Vedä järjestääksesi" data-hidden-label="{n} kätkettyä" data-move-status="Haara {n}/{total}" data-copied-label="Kopioitu" data-copy-failed-label="Paina ⌘C">
+<div class="brandbar"></div>
+<div class="brandline"></div>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Kirjoita se!</div>
+    <h1>Outliner-postaus LinkedIniin</h1>
+    <p class="sub">Keskustelusta purettu runko, josta teksti kirjoitetaan omin sanoin.</p>
+    <div class="tools" aria-label="Kartan ohjaimet">
+      <div class="hint"><b>Napsauta</b> otsikkoa piilottaaksesi tai palauttaaksesi haaran. <b>Vedä</b> solmusta tai paina <b>Alt</b> ja nuolinäppäimiä muuttaaksesi lukujärjestystä.</div>
+      <div class="actions">
+        <button type="button" id="expand-all">Avaa kaikki</button>
+        <button type="button" id="collapse-all">Piilota kaikki</button>
+        <button type="button" id="reset-order">Palauta järjestys</button>
+        <button type="button" class="primary" id="copy-outline">Kopioi runkona</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="root">
+    <h2>Outliner palauttaa kirjoittamisen tekoälykeskustelun jälkeen omiin käsiin</h2>
+    <p>LinkedIn-postaus interactive-outline-map-skillistä. Kuvituksena tämä kartta.</p>
+  </section>
+
+  <section class="trunk">
+    <article class="branch" data-branch-id="ninetys" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">90-luvun outlinerit</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Avaus ja kokemusankkuri.</p>
+      <div class="leaves">
+        <div class="leaf own">melkein yhtä kovaa kamaa "ajattelun apureina" kuin llm-mallit nykyään</div>
+        <div class="leaf own">itse käytin hetken think tankia ja myöhemmin more 3.0 softaa</div>
+        <div class="leaf highlight">Sama lupaus silloin ja nyt: kone auttaa ajattelemaan</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="trap" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">Iteroinnin ansa</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Miksi pitkä keskustelu mallin kanssa vaikeuttaa kirjoittamista.</p>
+      <div class="leaves">
+        <div class="leaf highlight">Valmiin kuuloinen teksti tekee omasta versiosta raskaamman kuin alussa</div>
+        <div class="leaf">Helpoin seuraava askel: jakaa mallin teksti</div>
+        <div class="leaf">Oma ääni katoaa huomaamatta</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="skill" style="--bc:var(--slate)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">Skilli: keskustelusta kartaksi</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Mitä skilli tekee ja miksi se rajoittaa itseään.</p>
+      <div class="leaves">
+        <div class="leaf own">tapa muuttaa tekoälyn kanssa käytyjä keskusteluja tiiviiseen muotoon</div>
+        <div class="leaf">Purkaa väitteiksi, jännitteiksi, esimerkeiksi, avoimiksi kysymyksiksi</div>
+        <div class="leaf highlight">Pysähtyy askelta ennen valmista proosaa</div>
+        <div class="leaf">Vain haarat liikkuvat – tarkoitus on päästä kirjoittamaan</div>
+        <div class="leaf">Kohta alle 20 sanaa: valmis virke houkuttelee kopioimaan</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="slowdown" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">Hidastus on hyöty</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Kirjoittaminen käsin kartan pohjalta.</p>
+      <div class="leaves">
+        <div class="leaf own">yksi hidastus ja tämä antaa aivoille tilaa huomata aukkoja perusteluissa</div>
+        <div class="leaf highlight">Sujuva proosa peittää aukot: kuulostaa valmiilta ennen ajatusta</div>
+        <div class="leaf">Omin sanoin muotoillessa näkyy puuttuva perustelu tai heikko esimerkki</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="claim" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">Väite, josta voi olla eri mieltä</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Kärki argumentissa, ei viimeisessä virkkeessä.</p>
+      <div class="leaves">
+        <div class="leaf">LLM:t nopeuttivat ensin tekstin tuottamista</div>
+        <div class="leaf highlight">Pullonkaula oli perustelun rakentaminen, ei tekstin tuottaminen</div>
+        <div class="leaf">Kone auttaa eniten, kun jättää viimeisen askeleen tekemättä?</div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="open" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">Auki</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Ratkaisematta ennen julkaisua.</p>
+      <div class="leaves">
+        <div class="leaf question">Luonnos on mallin – kirjoitanko postauksen itse tästä kartasta?</div>
+        <div class="leaf question">Kantaako 90-luku argumenttia vai onko se vain koukku?</div>
+        <div class="leaf question">Kenelle: SaaS-johto vai tekoälyn kanssa kirjoittavat asiantuntijat?</div>
+        <div class="leaf question">Linkki GitHubiin kommenttiin vai ei ollenkaan?</div>
+      </div>
+    </article>
+  </section>
+
+  <div class="legend"></div>
+</main>
+
+<script>
+(() => {
+  const trunk = document.querySelector('.trunk');
+  if (!trunk) return;
+  const body = document.body;
+  const PLACEHOLDER = 'replace-with-a-stable-map-key';
+  const mapKey = body.dataset.mapKey;
+  const storageKey = 'interactive-outline-map:' +
+    (mapKey && mapKey !== PLACEHOLDER ? mapKey : location.pathname);
+
+  /* Every user-visible string can be overridden with a data-attribute on <body>. */
+  const text = {
+    headingHint: body.dataset.headingHint || 'Click to hide or restore · Drag the node, or press Alt with the arrow keys, to reorder',
+    nodeHint: body.dataset.nodeHint || 'Drag to reorder',
+    hidden: body.dataset.hiddenLabel || '{n} hidden',
+    moved: body.dataset.moveStatus || 'Branch {n} of {total}',
+    copied: body.dataset.copiedLabel || 'Copied',
+    copyFailed: body.dataset.copyFailedLabel || 'Press ⌘C'
+  };
+  const fill = (template, values) =>
+    Object.entries(values).reduce((out, [key, value]) => out.split('{' + key + '}').join(String(value)), template);
+
+  const branches = () => [...trunk.querySelectorAll('.branch')];
+  const initialOrder = branches().map(branch => branch.dataset.branchId);
+  const signature = initialOrder.join('|');
+  const labelOf = branch => (branch.querySelector('.label') || branch.querySelector('.bhead')).textContent.trim();
+
+  const status = document.createElement('p');
+  status.className = 'sr-only';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  body.appendChild(status);
+
+  /* The legend is generated from the branches, so it cannot drift out of order
+     or out of wording. */
+  const legend = document.querySelector('.legend');
+  function syncLegend() {
+    if (!legend) return;
+    legend.replaceChildren(...branches().map(branch => {
+      const item = document.createElement('span');
+      const mark = document.createElement('i');
+      mark.style.background = branch.style.getPropertyValue('--bc') || 'var(--slate)';
+      item.append(mark, document.createTextNode(' ' + labelOf(branch)));
+      return item;
+    }));
+  }
+
+  function sizeLeafGuides() {
+    branches().forEach(branch => {
+      const leaves = branch.querySelector('.leaves');
+      const lastLeaf = leaves && leaves.querySelector('.leaf:last-child');
+      if (!lastLeaf) return;
+      const hidden = branch.classList.contains('is-collapsed');
+      if (hidden) leaves.style.cssText = 'display:block;position:absolute;visibility:hidden';
+      const end = lastLeaf.offsetTop + lastLeaf.offsetHeight / 2;
+      if (hidden) leaves.style.cssText = '';
+      if (end > 0) leaves.style.setProperty('--guide-end', end + 'px');
+    });
+  }
+
+  function renumber() {
+    branches().forEach((branch, index) => branch.querySelector('.dot').textContent = String(index + 1));
+    syncLegend();
+    requestAnimationFrame(sizeLeafGuides);
+  }
+
+  function save() {
+    const state = {
+      signature,
+      order: branches().map(branch => branch.dataset.branchId),
+      collapsed: branches().filter(branch => branch.classList.contains('is-collapsed')).map(branch => branch.dataset.branchId)
+    };
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function leafCount(branch) {
+    return branch.querySelectorAll('.leaves > .leaf').length;
+  }
+
+  function setCollapsed(branch, collapsed) {
+    branch.classList.toggle('is-collapsed', collapsed);
+    requestAnimationFrame(sizeLeafGuides);
+    const head = branch.querySelector('.bhead');
+    head.setAttribute('aria-expanded', String(!collapsed));
+    const count = leafCount(branch);
+    if (collapsed) {
+      branch.dataset.stack = String(Math.min(count, 2));
+      if (count) status.textContent = fill(text.hidden, { n: count });
+    } else {
+      delete branch.dataset.stack;
+    }
+  }
+
+  function toggle(branch) {
+    if (!leafCount(branch)) return;   /* nothing to fold away */
+    setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+    save();
+  }
+
+  function applyOrder(order) {
+    const byId = new Map(branches().map(branch => [branch.dataset.branchId, branch]));
+    order.forEach(id => {
+      const branch = byId.get(id);
+      if (branch) { trunk.appendChild(branch); byId.delete(id); }
+    });
+    byId.forEach(branch => trunk.appendChild(branch));
+    renumber();
+  }
+
+  function announce(branch) {
+    const list = branches();
+    status.textContent = fill(text.moved, { n: list.indexOf(branch) + 1, total: list.length });
+  }
+
+  function moveBy(branch, delta) {
+    const list = branches();
+    const target = list.indexOf(branch) + delta;
+    if (target < 0 || target >= list.length) return;
+    if (delta < 0) trunk.insertBefore(branch, list[target]);
+    else trunk.insertBefore(branch, list[target].nextElementSibling);
+    renumber();
+    save();
+    announce(branch);
+  }
+
+  branches().forEach(branch => {
+    const head = branch.querySelector('.bhead');
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', 'true');
+    head.setAttribute('title', text.headingHint);
+    if (!leafCount(branch)) branch.dataset.stack = '0';
+    const grip = branch.querySelector('.grip');
+    if (grip) grip.setAttribute('title', text.nodeHint);
+  });
+
+  /* Mouse keeps the browser's own drag image — the ghost of the heading you
+     grabbed. Touch and pen have no native drag, so they get a pointer path. */
+  let drag = null;
+
+  branches().forEach(branch => {
+    const grip = branch.querySelector('.grip');
+    if (!grip) return;
+    grip.addEventListener('mousedown', () => { branch.draggable = true; });
+    branch.addEventListener('dragstart', event => {
+      if (!branch.draggable) { event.preventDefault(); return; }
+      drag = { branch, native: true, lastY: event.clientY };
+      branch.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', branch.dataset.branchId);
+      const head = branch.querySelector('.bhead');
+      const rect = head.getBoundingClientRect();
+      const clamp = (value, max) => Math.max(0, Math.min(max, value));
+      event.dataTransfer.setDragImage(head, clamp(event.clientX - rect.left, rect.width), clamp(event.clientY - rect.top, rect.height));
+    });
+    branch.addEventListener('dragend', () => {
+      branch.draggable = false;
+      branch.classList.remove('dragging');
+      drag = null;
+      renumber();
+      save();
+      announce(branch);
+    });
+  });
+  document.addEventListener('mouseup', () => branches().forEach(branch => { branch.draggable = false; }));
+  trunk.addEventListener('dragover', event => {
+    if (!drag || !drag.native) return;
+    event.preventDefault();
+    moveToPointer(drag.branch, event.clientY);
+  });
+  trunk.addEventListener('drop', event => event.preventDefault());
+
+  /* A branch swaps with its neighbour once the pointer crosses the middle of
+     that neighbour's heading, so dropping onto the next heading moves it. Only
+     neighbours in the direction of travel are considered: branches differ in
+     height, and without that a swap could immediately undo itself. */
+  function moveToPointer(branch, clientY) {
+    const dy = clientY - drag.lastY;
+    if (!dy) return;
+    drag.lastY = clientY;
+    const list = branches();
+    const index = list.indexOf(branch);
+    const headMiddle = other => {
+      const rect = other.querySelector('.bhead').getBoundingClientRect();
+      return rect.top + rect.height / 2;
+    };
+    let moved = false;
+    if (dy > 0) {
+      for (let i = index + 1; i < list.length && clientY > headMiddle(list[i]); i++) {
+        trunk.insertBefore(branch, list[i].nextElementSibling);
+        moved = true;
+      }
+    } else {
+      for (let i = index - 1; i >= 0 && clientY < headMiddle(list[i]); i--) {
+        trunk.insertBefore(branch, list[i]);
+        moved = true;
+      }
+    }
+    if (moved) renumber();
+  }
+
+  trunk.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse') return;   /* the mouse uses native drag and drop */
+    const handle = event.target.closest('.grip');
+    if (!handle) return;
+    drag = { branch: handle.closest('.branch'), pointerId: event.pointerId, startY: event.clientY, lastY: event.clientY, moved: false };
+    try { handle.setPointerCapture(event.pointerId); } catch (_) {}
+  });
+
+  trunk.addEventListener('pointermove', event => {
+    if (!drag || drag.native || event.pointerId !== drag.pointerId) return;
+    if (!drag.moved) {
+      if (Math.abs(event.clientY - drag.startY) < 5) return;
+      drag.moved = true;
+      drag.branch.classList.add('dragging');
+    }
+    event.preventDefault();
+    moveToPointer(drag.branch, event.clientY);
+  });
+
+  function endDrag(event) {
+    if (!drag || drag.native || (event && event.pointerId !== drag.pointerId)) return;
+    const { branch, moved } = drag;
+    drag = null;
+    branch.classList.remove('dragging');
+    if (!moved) return;
+    renumber();
+    save();
+    announce(branch);
+  }
+
+  trunk.addEventListener('pointerup', endDrag);
+  trunk.addEventListener('pointercancel', endDrag);
+
+  trunk.addEventListener('click', event => {
+    const head = event.target.closest('.bhead');
+    if (!head || event.target.closest('.grip')) return;   /* those are drag handles */
+    toggle(head.closest('.branch'));
+  });
+
+  trunk.addEventListener('keydown', event => {
+    const head = event.target.closest('.bhead');
+    if (!head) return;
+    const branch = head.closest('.branch');
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle(branch);
+      return;
+    }
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    if (!event.altKey && !event.ctrlKey && !event.metaKey) return;
+    event.preventDefault();
+    moveBy(branch, event.key === 'ArrowUp' ? -1 : 1);
+    head.focus();
+  });
+
+  /* The map is a step on the way to writing, so the structure has to be able
+     to leave it. */
+  function flagOf(leaf) {
+    const flag = getComputedStyle(leaf, '::after').content;
+    return flag && flag !== 'none' ? flag.replace(/^"|"$/g, '') : '';
+  }
+
+  function asOutline() {
+    const lines = [];
+    const root = document.querySelector('.root');
+    if (root) {
+      const title = root.querySelector('h2');
+      const note = root.querySelector('p');
+      if (title) lines.push('# ' + title.textContent.trim());
+      if (note) lines.push('', note.textContent.trim());
+    }
+    branches().forEach((branch, index) => {
+      const hidden = branch.classList.contains('is-collapsed');
+      lines.push('', '## ' + (index + 1) + '. ' + labelOf(branch) + (hidden ? '  <!-- hidden -->' : ''));
+      const note = branch.querySelector('.bnote');
+      if (note) lines.push('', '_' + note.textContent.trim() + '_');
+      const leaves = [...branch.querySelectorAll('.leaves > .leaf')];
+      if (leaves.length) lines.push('');
+      leaves.forEach(leaf => {
+        const twig = leaf.querySelector('.twig');
+        const flag = flagOf(leaf);
+        const own = leaf.cloneNode(true);
+        own.querySelectorAll('.twig').forEach(node => node.remove());
+        lines.push('- ' + (flag ? '**' + flag + ':** ' : '') + own.textContent.trim().replace(/\s+/g, ' '));
+        if (twig) [...twig.children].forEach(item => lines.push('  - ' + item.textContent.trim().replace(/\s+/g, ' ')));
+      });
+    });
+    return lines.join('\n').trim() + '\n';
+  }
+
+  const copyButton = document.getElementById('copy-outline');
+  if (copyButton) {
+    const original = copyButton.textContent;
+    const flash = message => {
+      copyButton.textContent = message;
+      setTimeout(() => copyButton.textContent = original, 1600);
+    };
+    copyButton.addEventListener('click', async () => {
+      const outline = asOutline();
+      try {
+        await navigator.clipboard.writeText(outline);
+        flash(text.copied);
+        return;
+      } catch (_) { /* fall through to the selection fallback */ }
+      const field = document.createElement('textarea');
+      field.value = outline;
+      field.setAttribute('readonly', '');
+      field.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      body.appendChild(field);
+      field.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (_) {}
+      field.remove();
+      flash(copied ? text.copied : text.copyFailed);
+    });
+  }
+
+  document.getElementById('expand-all').addEventListener('click', () => { branches().forEach(branch => setCollapsed(branch, false)); save(); });
+  document.getElementById('collapse-all').addEventListener('click', () => { branches().forEach(branch => setCollapsed(branch, true)); save(); });
+  document.getElementById('reset-order').addEventListener('click', () => { applyOrder(initialOrder); save(); });
+
+  /* A stored order is only restored while the file still has the same branches
+     in the same order it had when that state was saved. Regenerating the map
+     therefore wins over a reader's earlier drag. */
+  try {
+    const state = JSON.parse(localStorage.getItem(storageKey));
+    if (state) {
+      if (Array.isArray(state.order) && state.signature === signature) applyOrder(state.order);
+      if (Array.isArray(state.collapsed)) branches().forEach(branch => setCollapsed(branch, state.collapsed.includes(branch.dataset.branchId)));
+    }
+  } catch (_) {}
+  renumber();
+  const guideObserver = 'ResizeObserver' in window ? new ResizeObserver(sizeLeafGuides) : null;
+  if (guideObserver) branches().forEach(branch => {
+    const leaves = branch.querySelector('.leaves');
+    if (leaves) guideObserver.observe(leaves);
+  });
+  window.addEventListener('resize', sizeLeafGuides);
+  window.addEventListener('beforeprint', sizeLeafGuides);
+  sizeLeafGuides();
+})();
+</script>
+</body>
+</html>

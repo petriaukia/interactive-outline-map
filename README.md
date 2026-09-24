@@ -77,14 +77,15 @@ The skill can also adapt an existing HTML map while preserving its content and v
 
 ## Examples
 
-All four are live at [petriaukia.github.io/interactive-outline-map](https://petriaukia.github.io/interactive-outline-map/) — the links below open the maps themselves, not their source.
+All five are live at [petriaukia.github.io/interactive-outline-map](https://petriaukia.github.io/interactive-outline-map/) — the links below open the maps themselves, not their source.
 
 1. [SWOT kartoittaa huoneen, ei markkinaa](https://petriaukia.github.io/interactive-outline-map/examples/swot-mindmap.html) is the writing-recovery case, and it is the page this skill grew out of: an argument that had been talked over until it was ready to write but not yet written, reduced to seven branches the author could write from in his own voice. Cards marked *säilytä sanasta sanaan* — keep word for word — are the only wording that is fixed; everything else is a prompt, not a sentence. It is in Finnish, so it also shows how a map is localised: `lang`, the chrome, the CSS flag names and the script's strings, all overridden without touching the CSS or the JavaScript.
 2. [The outline under a 237-page report](https://petriaukia.github.io/interactive-outline-map/examples/tcf-assurance-review.html) maps a real assurance review — the Targeted Compliance Framework review written by Deloitte for an Australian government department — into the structure a writer would work from: the question asked, the method, the findings, the causes, the eight themes the whole document hangs on, the recommendations, and what the report discloses about itself. Every sourced claim carries its section number.
 3. [Attention Is All You Need](https://petriaukia.github.io/interactive-outline-map/examples/attention-is-all-you-need.html) maps the 2017 Transformer paper into six movable and collapsible branches: motivation, architecture, attention, positional information, training and results. The text is a compact original summary linked to the NeurIPS publication and arXiv record; where the two report different numbers, the map follows the NeurIPS version.
 4. [A Room of One's Own](https://petriaukia.github.io/interactive-outline-map/examples/a-room-of-ones-own.html) maps Virginia Woolf's 1929 essay into seven movable and collapsible branches: method, material conditions, the missing archive, literary tradition, external scrutiny, the undivided mind and the future Woolf asks readers to make. The map paraphrases the essay and links to a full-text source.
+5. [Outliner-postaus LinkedIniin](https://petriaukia.github.io/interactive-outline-map/examples/outliner-linkedin-post.html) is the map behind a LinkedIn post about this skill, made from the conversation in which the post was planned. The four cards marked *omin sanoin* are the author's own wording lifted from the author's messages; the last branch keeps what was still undecided, including whether the model's draft should be thrown away and the post written from the map instead.
 
-The first is mode 2, writing recovery; the rest are mode 1, understanding an existing text. They carry their own frozen copy of the template's CSS and script; when the template changes, they are regenerated from it rather than edited by hand.
+The first and the last are mode 2, writing recovery; the rest are mode 1, understanding an existing text. They carry their own frozen copy of the template's CSS and script; when the template changes, they are regenerated from it rather than edited by hand.
 
 ## Checking a generated map
 
