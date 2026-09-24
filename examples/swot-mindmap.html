@@ -1,13 +1,11 @@
 <!doctype html>
-<html lang="fi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SWOT kartoittaa huoneen, ei markkinaa</title>
+<title>SWOT maps the room, not the market</title>
 <style>
   :root{
-    --flag-key-idea:"ydinlause";--flag-source:"lähteestä";
-    --flag-question:"avoin kysymys";--flag-own:"säilytä sanasta sanaan";
     --wine:#CC0033;--wine-50:#FDF1F4;--petrol-50:#EDF6F6;--amber-50:#FBF3E4;--navy-50:#EBEEF5;
     --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
     --amber:#E3A130;--amber-700:#B97F1E;
@@ -116,144 +114,126 @@
   .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
   .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
   .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
-  /* Type "more" to dress the page as the outliner this skill remembers: a
-     pinstriped title bar, a joined toolbar and hard shadows. Type it again to
-     leave. Nothing on the page advertises it. */
-  body.more header{border-top:0;padding-top:0}
-  body.more header::before{content:"";display:block;height:14px;margin-bottom:22px;border-bottom:2px solid var(--navy);
-    background:repeating-linear-gradient(to bottom,var(--navy) 0 1px,transparent 1px 3px)}
-  body.more .tools{border-top:0;padding-top:0;flex-direction:row-reverse;justify-content:flex-end}
-  body.more .actions{gap:0;border:2px solid var(--navy);background:var(--surface);box-shadow:4px 4px 0 0 var(--navy)}
-  body.more .actions button{border:0;border-right:2px solid var(--navy);padding:8px 13px}
-  body.more .actions button.primary{border-right:0;background:var(--amber);color:var(--navy)}
-  body.more .root{padding:20px 24px;border:2px solid var(--navy);background:var(--surface);box-shadow:6px 6px 0 0 var(--navy)}
-  body.more .root::before,body.more .root::after{display:none}
-  body.more .leaf,body.more .bhead,body.more .leaf::after{border-radius:0}
-  @media (max-width:640px){.tools,body.more .tools{align-items:flex-start;flex-direction:column}}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
   @media print{
     body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{margin-top:6mm}.tools{display:none}
     .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.grip,.state{display:none}
     .branch[data-stack] .bhead{box-shadow:none}
-  }</style>
+  }
+</style>
 </head>
-<body data-map-key="swot-mindmap-2026"
-      data-heading-hint="Napsauta: kätke tai palauta · Raahaa kahvasta tai Alt + nuolinäppäimet: järjestä"
-      data-node-hint="Raahaa järjestääksesi"
-      data-hidden-label="{n} kätkettyä"
-      data-move-status="Oksa {n}/{total}"
-      data-copied-label="Kopioitu"
-      data-copy-failed-label="Paina ⌘C">
+<body data-map-key="swot-mindmap-2026">
 <main class="wrap">
   <header>
-    <h1>SWOT kartoittaa huoneen, ei markkinaa</h1>
-    <div class="tools" aria-label="Kartan työkalut">
-      <div class="hint"><b>Napsauta</b> otsikkoa kätkeäksesi · <b>raahaa</b> kahvasta tai paina <b>Alt</b>+nuolet järjestääksesi</div>
+    <h1>SWOT maps the room, not the market</h1>
+    <div class="tools" aria-label="Map controls">
+      <div class="hint"><b>Click</b> a heading to fold it · <b>drag</b> the dots or press <b>Alt</b>+arrows to reorder</div>
       <div class="actions">
-        <button type="button" id="expand-all">Avaa kaikki</button>
-        <button type="button" id="collapse-all">Kätke kaikki</button>
-        <button type="button" id="reset-order">Palauta järjestys</button>
-        <button type="button" class="primary" id="copy-outline">Kopioi runkona</button>
+        <button type="button" id="expand-all">Open all</button>
+        <button type="button" id="collapse-all">Hide all</button>
+        <button type="button" id="reset-order">Restore order</button>
+        <button type="button" class="primary" id="copy-outline">Copy as outline</button>
       </div>
     </div>
   </header>
 
   <section class="root">
-    <h2>SWOT kuvaa osallistujien uskomuksia</h2>
-    <p>Uskomukset ovat eri asia kuin yritys, ja usein arvokkaampi tieto. Nelikenttää ei silti heitetä pois: kelvoton tiedonkeruuseen, paras mitä on käsittelyyn.</p>
+    <h2>A SWOT describes what the participants believe</h2>
+    <p>Beliefs are not the same thing as the company, and often worth more. The grid is not thrown out: useless for gathering, the best there is for discussing.</p>
   </section>
 
   <section class="trunk">
-    <article class="branch" data-branch-id="ankkuri" style="--bc:var(--navy)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">Oma ankkuri: 90-luvulta asti</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Ei "olen oppinut ajan kanssa" vaan "näin tämän jo nuorena – 30 vuotta vain vahvisti".</p>
+    <article class="branch" data-branch-id="anchor" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">My anchor: since the nineties</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Not "I learned this over time" but "I saw it early on – thirty years only confirmed it".</p>
       <div class="leaves">
-        <div class="leaf">Harva huoneessa tuntee kilpailijat <b>esitteitä syvemmältä</b>: hinnat, toimituskyvyn, asiakkaiden vaihtohalun.</div>
-        <div class="leaf">Omille vahvuuksille yhtä sokeita kuin heikkouksille, <b>johtoa myöten</b>.</div>
-        <div class="leaf">Poikkeus: talo, joka kerää markkinatietoa järjestelmällisesti + kykenee introspektioon<div class="twig"><div>→ mutta sellainen ei SWOT-työpajaa kaipaakaan (kuittaa sivulauseella)</div></div></div>
+        <div class="leaf">Few in the room know competitors <b>beyond their brochures</b>: prices, delivery capacity, customers' appetite to switch.</div>
+        <div class="leaf">As blind to their own strengths as to their weaknesses, <b>management included</b>.</div>
+        <div class="leaf">The exception: a company that gathers market data systematically and can look at itself<div class="twig"><div>→ but that company has no need for a SWOT workshop (a subordinate clause is enough)</div></div></div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="viat" style="--bc:var(--slate)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">Kolme rakenteellista vikaa</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Strategiakäytön viat – nopea, rytmikäs kolmen isku.</p>
+    <article class="branch" data-branch-id="flaws" style="--bc:var(--slate)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">Three structural flaws</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Flaws in strategic use – a fast, rhythmic one-two-three.</p>
       <div class="leaves">
-        <div class="leaf"><b>Pysäytyskuva liikkuvassa maailmassa.</b> Vahvuus, jonka tekoäly hyödykkeistää 12 kk:ssa, istuu ruudussa kuin ikuinen etu.</div>
-        <div class="leaf"><b>Kaikki laput samanarvoisia.</b> Myyntijohtajan mutu ja tilinpäätösfakta rinnakkain, ilman painoja.</div>
-        <div class="leaf"><b>Neljä ruutua valehtelee tasapainoa.</b> Yksi asia ratkaisee ja loput ovat tapettia.</div>
+        <div class="leaf"><b>A still frame of a moving world.</b> A strength AI will commoditise within a year sits in its box like a permanent advantage.</div>
+        <div class="leaf"><b>Every sticky note weighs the same.</b> The sales director's hunch next to a fact from the accounts, unweighted.</div>
+        <div class="leaf"><b>Four boxes fake a balance.</b> One thing decides, and the rest is wallpaper.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="sosiaalinen" style="--bc:var(--amber-700)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">Neljäs vika: sosiaalinen vaara</span><span class="state" aria-hidden="true"></span></div>
+    <article class="branch" data-branch-id="social" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">A fourth flaw: social danger</span><span class="state" aria-hidden="true"></span></div>
       <div class="leaves">
-        <div class="leaf">Viisi kuudesta kirjoittaa lapulle <b>"myynti on heikkoutemme"</b> – ja myyntijohtaja istuu samassa pöydässä.</div>
-        <div class="leaf">"Kehu julkisesti, kritisoi yksityisesti" ei voi toimia menetelmässä, joka kerää kritiikin fläppitaululle kaikkien nähden.</div>
-        <div class="leaf">Repivä avaus voi maksaa koko syksyn strategiatyön ilmapiirin.</div>
+        <div class="leaf">Five out of six write <b>"sales is our weakness"</b> – with the sales director at the same table.</div>
+        <div class="leaf">"Praise in public, criticise in private" cannot work in a method that collects criticism on a flip chart for everyone to see.</div>
+        <div class="leaf">A divisive opening can cost the mood of the whole autumn's strategy work.</div>
       </div>
     </article>
 
     <article class="branch" data-branch-id="judo" style="--bc:var(--petrol)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">Judoheitto: kerää muualla, käsittele nelikentässä</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Nelikenttä siirretään tehtävään, johon se sopii. Viesti asiakkaalle
-        ei ole "olet väärässä" vaan "tämä vaatii yhden asian ennen käyttöä".</p>
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">The judo throw: gather elsewhere, discuss in the grid</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">The grid moves to the job it fits. The message to the client
+        is not "you are wrong" but "this needs one thing before use".</p>
       <div class="leaves">
-        <div class="leaf">Kerää näkemykset <b>ennen</b> työpajaa – kirjallisesti, yksityisesti. (Ratkaisee oksan 3 samalla.)</div>
-        <div class="leaf own">Jokainen merkitsee omiin kohtiinsa: <b>uskomus vai todistettu?</b></div>
-        <div class="leaf">Moni huomaa jo kirjoittaessaan, ettei vahvimmalle mielipiteelle löydy näyttöä.</div>
-        <div class="leaf">SWOT on yrityksen <b>Rorschach-testi</b>: tulos kertoo katsojista. Siksi se kannattaa teettää.
+        <div class="leaf">Gather views <b>before</b> the workshop – in writing, in private. (This solves branch 3 as well.)</div>
+        <div class="leaf own">Everyone marks each of their points: <b>belief or proven?</b></div>
+        <div class="leaf">Many notice while writing that their strongest opinion has no evidence behind it.</div>
+        <div class="leaf">A SWOT is the company's <b>Rorschach test</b>: the result describes the viewers. That is why it is worth doing.
           <div class="twig">
-            <div>todistettu → strategiatyöhön</div>
-            <div>uskomukset → kertovat, minkä varassa taloa oikeasti johdetaan</div>
+            <div>proven → into the strategy work</div>
+            <div>beliefs → show what the company is really being run on</div>
           </div>
         </div>
-        <div class="leaf">Rinnalle koneen analyysi julkisista lähteistä (oksa 5 avaa).</div>
-        <div class="leaf">Nelikenttä vasta <b>käsittelyvaiheen formaattina</b> – jaettu lukutaito: jokainen johtoryhmä ja hallitus lukee sen ilman perehdytystä.
-          <div class="twig"><div>työpaja fasilitoidaan yhteiseen tulkintaan ja päätöksiin</div></div>
+        <div class="leaf">Alongside it, a machine's analysis from public sources (branch 5 opens this).</div>
+        <div class="leaf">The grid only as the <b>format for discussion</b> – shared literacy: every management team and board reads it without an introduction.
+          <div class="twig"><div>the workshop is facilitated towards a shared reading and decisions</div></div>
         </div>
-        <div class="leaf">Käsittelyvaiheessa nelikenttä on sosiaalisesti turvallinen, koska kritiikki on kerätty jo etukäteen.</div>
+        <div class="leaf">At the discussion stage the grid is socially safe, because the criticism was gathered beforehand.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="agenttikaanne" style="--bc:var(--wine)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">Koneen SWOT rinnalle</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Artikkelin uutuusarvo – mahdollista vasta parin vuoden ajan.</p>
+    <article class="branch" data-branch-id="machine-swot" style="--bc:var(--wine)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">A machine's SWOT alongside</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">What is new in the article – possible only for the last couple of years.</p>
       <div class="leaves">
-        <div class="leaf">Agentti tekee saman SWOTin <b>pelkistä julkisista lähteistä</b>: verkkosivut, tilinpäätökset, rekryt, asiakaskommentit. Tunneissa, ilman yhtään luottamuksellista dokumenttia.</div>
-        <div class="leaf">Huoneen näkemykset + koneen analyysi <b>vierekkäin, samaan nelikenttään</b> → erotus on koko harjoituksen tulos.
+        <div class="leaf">An agent makes the same SWOT <b>from public sources alone</b>: websites, annual accounts, job ads, customer comments. In hours, without a single confidential document.</div>
+        <div class="leaf">The room's views and the machine's analysis <b>side by side, in the same grid</b> → the difference is the result of the whole exercise.
           <div class="twig">
-            <div>ero = sokea piste tai vahvuus, josta ette ole kertoneet kenellekään</div>
+            <div>difference = a blind spot, or a strength you have told no one about</div>
           </div>
         </div>
-        <div class="leaf">Sama temppu toiseen suuntaan: <b>kilpailijoiden SWOTit</b> käden käänteessä<div class="twig"><div>→ 90-luvun perusongelma sai muutaman tunnin vastalääkkeen (kaari sulkeutuu oksaan 1)</div></div></div>
-        <div class="leaf own">Kone voi sanoa sen, mitä kollega ei voi.</div>
+        <div class="leaf">The same trick the other way: <b>competitors' SWOTs</b> in no time<div class="twig"><div>→ the basic problem of the nineties got a remedy that takes a few hours (the arc closes back to branch 1)</div></div></div>
+        <div class="leaf own">A machine can say what a colleague cannot.</div>
       </div>
     </article>
 
-    <article class="branch" data-branch-id="strategiakausi" style="--bc:var(--petrol-700)">
-      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">Syksyn strategiakausi (CTA)</span><span class="state" aria-hidden="true"></span></div>
+    <article class="branch" data-branch-id="strategy-season" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">The autumn strategy season (CTA)</span><span class="state" aria-hidden="true"></span></div>
       <div class="leaves">
-        <div class="leaf">Strategiapäivät osuvat syys–lokakuuhun. Teetä koneen analyysi – omastanne ja kilpailijoista – <b>ennen omaa päiväänne</b>; se valmistuu tunneissa.</div>
-        <div class="leaf">Kuvat yhtenevät → omakuva terve. Eroavat → strategiapäivän keskustelun aloituskohta löytyi.</div>
+        <div class="leaf">Strategy days fall in September and October. Have the machine's analysis made – of yourselves and your competitors – <b>before your own day</b>; it is ready in hours.</div>
+        <div class="leaf">The pictures match → the self-image is healthy. They differ → the strategy day has found where its discussion starts.</div>
       </div>
     </article>
 
     <article class="branch" data-branch-id="ps" style="--bc:var(--gray)">
       <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">7</span><span class="label">PS.</span><span class="state" aria-hidden="true"></span></div>
-      <p class="bnote">Terävimmät havainnot loppuun.</p>
+      <p class="bnote">The sharpest observations go last.</p>
       <div class="leaves">
-        <div class="leaf"><b>PS.</b> Rajaus julkisiin lähteisiin on tahallinen: luottamuksellista aineistoa ei viedä yleistyökaluun, ja kuvan pitää syntyä markkinan silmin.</div>
-        <div class="leaf"><b>PPS. (piikki, kärki neuvoksi)</b> Jos konsultti tuo strategiapäivään valmiin SWOT-pohjan, kysy yksi kysymys: mistä sisältö kerätään? Jos vastaus on "huoneesta", pyydä keruu kirjallisena etukäteen – pohjassa ei ole vikaa, keruutavassa on.</div>
+        <div class="leaf"><b>PS.</b> Limiting it to public sources is deliberate: confidential material does not go into a general-purpose tool, and the picture has to be seen through the market's eyes.</div>
+        <div class="leaf"><b>PPS. (the sting, the point as advice)</b> If a consultant brings a ready SWOT template to your strategy day, ask one question: where does the content come from? If the answer is "the room", ask for it in writing beforehand – the template is not the problem, the way it is gathered is.</div>
       </div>
     </article>
   </section>
 
   <div class="legend">
-    <span><i style="background:var(--navy)"></i> Oma ankkuri: 90-luvulta asti</span>
-    <span><i style="background:var(--slate)"></i> Kolme rakenteellista vikaa</span>
-    <span><i style="background:var(--amber-700)"></i> Neljäs vika: sosiaalinen vaara</span>
-    <span><i style="background:var(--petrol)"></i> Judoheitto: kerää muualla, käsittele nelikentässä</span>
-    <span><i style="background:var(--wine)"></i> Koneen SWOT rinnalle</span>
-    <span><i style="background:var(--petrol-700)"></i> Syksyn strategiakausi (CTA)</span>
+    <span><i style="background:var(--navy)"></i> My anchor: since the nineties</span>
+    <span><i style="background:var(--slate)"></i> Three structural flaws</span>
+    <span><i style="background:var(--amber-700)"></i> A fourth flaw: social danger</span>
+    <span><i style="background:var(--petrol)"></i> The judo throw: gather elsewhere, discuss in the grid</span>
+    <span><i style="background:var(--wine)"></i> A machine's SWOT alongside</span>
+    <span><i style="background:var(--petrol-700)"></i> The autumn strategy season (CTA)</span>
     <span><i style="background:var(--gray)"></i> PS.</span>
   </div>
 </main>
@@ -634,20 +614,6 @@
   window.addEventListener('resize', sizeLeafGuides);
   window.addEventListener('beforeprint', sizeLeafGuides);
   sizeLeafGuides();
-
-  /* The easter egg: typing m-o-r-e toggles the retro skin, and it is remembered. */
-  const MORE_KEY = 'interactive-outline-map:more';
-  try { if (localStorage.getItem(MORE_KEY) === '1') body.classList.add('more'); } catch (_) {}
-  let typed = '';
-  document.addEventListener('keydown', event => {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.key.length !== 1) return;
-    typed = (typed + event.key.toLowerCase()).slice(-4);
-    if (typed !== 'more') return;
-    typed = '';
-    const on = body.classList.toggle('more');
-    try { localStorage.setItem(MORE_KEY, on ? '1' : '0'); } catch (_) {}
-    requestAnimationFrame(sizeLeafGuides);
-  });
 })();
 </script>
 </body>

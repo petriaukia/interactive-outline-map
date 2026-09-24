@@ -105,7 +105,6 @@ For an existing HTML map, edit the exact file only when the user asks; otherwise
 - Order and collapsed state persist in `localStorage`, with a safe fallback when storage is unavailable. A stored order is discarded once the file’s own branch order has changed, so regenerating the map beats a reader’s earlier drag.
 - “Open all”, “Hide all”, “Restore order” and “Copy as outline” remain available. Copy hands the current order back as Markdown — the map is a step towards writing, so the structure has to be able to leave it.
 - Printing reveals all branch content and omits interaction-only controls, including the stack behind a collapsed heading — on paper nothing is hidden, so nothing should suggest it is. Branch guides are measured even while a branch is hidden, so a printed map that was collapsed on screen still ends each guide in the right place.
-- Typing “more” anywhere on the page toggles a retro skin — a pinstriped title bar, a joined toolbar and hard shadows, after the outliner of that name — and the choice is remembered. It is deliberately unadvertised. Keep it when editing the template or a map.
 
 ## Visual decisions
 

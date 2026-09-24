@@ -115,20 +115,7 @@
   .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
   .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
   .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
-  /* Type "more" to dress the page as the outliner this skill remembers: a
-     pinstriped title bar, a joined toolbar and hard shadows. Type it again to
-     leave. Nothing on the page advertises it. */
-  body.more header{border-top:0;padding-top:0}
-  body.more header::before{content:"";display:block;height:14px;margin-bottom:22px;border-bottom:2px solid var(--navy);
-    background:repeating-linear-gradient(to bottom,var(--navy) 0 1px,transparent 1px 3px)}
-  body.more .tools{border-top:0;padding-top:0;flex-direction:row-reverse;justify-content:flex-end}
-  body.more .actions{gap:0;border:2px solid var(--navy);background:var(--surface);box-shadow:4px 4px 0 0 var(--navy)}
-  body.more .actions button{border:0;border-right:2px solid var(--navy);padding:8px 13px}
-  body.more .actions button.primary{border-right:0;background:var(--amber);color:var(--navy)}
-  body.more .root{padding:20px 24px;border:2px solid var(--navy);background:var(--surface);box-shadow:6px 6px 0 0 var(--navy)}
-  body.more .root::before,body.more .root::after{display:none}
-  body.more .leaf,body.more .bhead,body.more .leaf::after{border-radius:0}
-  @media (max-width:640px){.tools,body.more .tools{align-items:flex-start;flex-direction:column}}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
   @media print{
     body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{margin-top:6mm}.tools{display:none}
     .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.grip,.state{display:none}
@@ -600,20 +587,6 @@
   window.addEventListener('resize', sizeLeafGuides);
   window.addEventListener('beforeprint', sizeLeafGuides);
   sizeLeafGuides();
-
-  /* The easter egg: typing m-o-r-e toggles the retro skin, and it is remembered. */
-  const MORE_KEY = 'interactive-outline-map:more';
-  try { if (localStorage.getItem(MORE_KEY) === '1') body.classList.add('more'); } catch (_) {}
-  let typed = '';
-  document.addEventListener('keydown', event => {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.key.length !== 1) return;
-    typed = (typed + event.key.toLowerCase()).slice(-4);
-    if (typed !== 'more') return;
-    typed = '';
-    const on = body.classList.toggle('more');
-    try { localStorage.setItem(MORE_KEY, on ? '1' : '0'); } catch (_) {}
-    requestAnimationFrame(sizeLeafGuides);
-  });
 })();
 </script>
 </body>
