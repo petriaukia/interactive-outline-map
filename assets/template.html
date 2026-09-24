@@ -319,7 +319,7 @@
     grip.addEventListener('mousedown', () => { branch.draggable = true; });
     branch.addEventListener('dragstart', event => {
       if (!branch.draggable) { event.preventDefault(); return; }
-      drag = { branch, native: true };
+      drag = { branch, native: true, lastY: event.clientY };
       branch.classList.add('dragging');
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', branch.dataset.branchId);
@@ -345,20 +345,40 @@
   });
   trunk.addEventListener('drop', event => event.preventDefault());
 
+  /* A branch swaps with its neighbour once the pointer crosses the middle of
+     that neighbour's heading, so dropping onto the next heading moves it. Only
+     neighbours in the direction of travel are considered: branches differ in
+     height, and without that a swap could immediately undo itself. */
   function moveToPointer(branch, clientY) {
-    const next = branches().filter(other => other !== branch).find(other => {
-      const rect = other.getBoundingClientRect();
-      return clientY < rect.top + rect.height / 2;
-    });
-    if (next) trunk.insertBefore(branch, next); else trunk.appendChild(branch);
-    renumber();
+    const dy = clientY - drag.lastY;
+    if (!dy) return;
+    drag.lastY = clientY;
+    const list = branches();
+    const index = list.indexOf(branch);
+    const headMiddle = other => {
+      const rect = other.querySelector('.bhead').getBoundingClientRect();
+      return rect.top + rect.height / 2;
+    };
+    let moved = false;
+    if (dy > 0) {
+      for (let i = index + 1; i < list.length && clientY > headMiddle(list[i]); i++) {
+        trunk.insertBefore(branch, list[i].nextElementSibling);
+        moved = true;
+      }
+    } else {
+      for (let i = index - 1; i >= 0 && clientY < headMiddle(list[i]); i--) {
+        trunk.insertBefore(branch, list[i]);
+        moved = true;
+      }
+    }
+    if (moved) renumber();
   }
 
   trunk.addEventListener('pointerdown', event => {
     if (event.pointerType === 'mouse') return;   /* the mouse uses native drag and drop */
     const handle = event.target.closest('.grip');
     if (!handle) return;
-    drag = { branch: handle.closest('.branch'), pointerId: event.pointerId, startY: event.clientY, moved: false };
+    drag = { branch: handle.closest('.branch'), pointerId: event.pointerId, startY: event.clientY, lastY: event.clientY, moved: false };
     try { handle.setPointerCapture(event.pointerId); } catch (_) {}
   });
 
