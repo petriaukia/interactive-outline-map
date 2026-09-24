@@ -70,8 +70,14 @@
                10px 10px 0 -2px var(--surface),10px 10px 0 0 var(--bc,var(--gray))}
   .branch[data-stack="0"] .state{display:none}
   .branch[data-stack="0"] .bhead{cursor:default}
-  .branch.dragging{opacity:.3}
-  .branch.dragging .bhead{cursor:grabbing}
+  /* While a branch is dragged it shrinks to its heading, drawn as the empty
+     slot it will land in, so the drop point is always visible. */
+  .branch.dragging .bnote,.branch.dragging .leaves{display:none}
+  .branch.dragging .bhead{cursor:grabbing;border-style:dashed;
+    background:color-mix(in srgb,var(--bc) 10%,var(--surface));box-shadow:none}
+  .branch.just-moved .bhead{animation:settle .9s ease-out}
+  @keyframes settle{from{background:color-mix(in srgb,var(--bc) 28%,var(--surface))}to{background:var(--surface)}}
+  @media (prefers-reduced-motion:reduce){.branch.just-moved .bhead{animation:none}}
   .leaves{--leaf-line:color-mix(in srgb,var(--bc) 45%,transparent);position:relative;
     margin:12px 0 0 10px;padding-left:18px}
   .leaves::before{content:"";position:absolute;left:0;top:0;width:2px;height:var(--guide-end,calc(100% - 22px));
@@ -341,15 +347,45 @@
     status.textContent = fill(text.moved, { n: list.indexOf(branch) + 1, total: list.length });
   }
 
+  /* Reordering slides the branches from where they were drawn to where they
+     now are, instead of letting them jump. The start is read from the screen,
+     so a slide that is interrupted by the next swap carries on smoothly. */
+  const reducedMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function layoutTop(branch) {
+    const shift = new DOMMatrixReadOnly(getComputedStyle(branch).transform).m42;
+    return branch.getBoundingClientRect().top - shift;
+  }
+  function slide(reorder) {
+    const list = branches();
+    const drawn = new Map(list.map(branch => [branch, branch.getBoundingClientRect().top]));
+    reorder();
+    if (reducedMotion || !Element.prototype.animate) return;
+    list.forEach(branch => {
+      const from = drawn.get(branch) - layoutTop(branch);
+      if (Math.abs(from) < 1) return;
+      branch.animate([{ transform: `translateY(${from}px)` }, { transform: 'none' }],
+        { duration: 200, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    });
+  }
+  function settle(branch) {
+    branch.classList.remove('just-moved');
+    void branch.offsetWidth;
+    branch.classList.add('just-moved');
+    setTimeout(() => branch.classList.remove('just-moved'), 950);
+  }
+
   function moveBy(branch, delta) {
     const list = branches();
     const target = list.indexOf(branch) + delta;
     if (target < 0 || target >= list.length) return;
-    if (delta < 0) trunk.insertBefore(branch, list[target]);
-    else trunk.insertBefore(branch, list[target].nextElementSibling);
+    slide(() => {
+      if (delta < 0) trunk.insertBefore(branch, list[target]);
+      else trunk.insertBefore(branch, list[target].nextElementSibling);
+    });
     renumber();
     save();
     announce(branch);
+    settle(branch);
   }
 
   branches().forEach(branch => {
@@ -374,7 +410,7 @@
     branch.addEventListener('dragstart', event => {
       if (!branch.draggable) { event.preventDefault(); return; }
       drag = { branch, native: true, lastY: event.clientY };
-      branch.classList.add('dragging');
+      setTimeout(() => slide(() => branch.classList.add('dragging')));
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', branch.dataset.branchId);
       const head = branch.querySelector('.bhead');
@@ -384,11 +420,12 @@
     });
     branch.addEventListener('dragend', () => {
       branch.draggable = false;
-      branch.classList.remove('dragging');
       drag = null;
+      slide(() => branch.classList.remove('dragging'));
       renumber();
       save();
       announce(branch);
+      settle(branch);
     });
   });
   document.addEventListener('mouseup', () => branches().forEach(branch => { branch.draggable = false; }));
@@ -410,18 +447,20 @@
     const list = branches();
     const index = list.indexOf(branch);
     const headMiddle = other => {
-      const rect = other.querySelector('.bhead').getBoundingClientRect();
-      return rect.top + rect.height / 2;
+      const head = other.querySelector('.bhead');
+      return layoutTop(other) + head.offsetTop + head.offsetHeight / 2;
     };
     let moved = false;
     if (dy > 0) {
       for (let i = index + 1; i < list.length && clientY > headMiddle(list[i]); i++) {
-        trunk.insertBefore(branch, list[i].nextElementSibling);
+        const after = list[i];
+        slide(() => trunk.insertBefore(branch, after.nextElementSibling));
         moved = true;
       }
     } else {
       for (let i = index - 1; i >= 0 && clientY < headMiddle(list[i]); i--) {
-        trunk.insertBefore(branch, list[i]);
+        const before = list[i];
+        slide(() => trunk.insertBefore(branch, before));
         moved = true;
       }
     }
@@ -441,7 +480,8 @@
     if (!drag.moved) {
       if (Math.abs(event.clientY - drag.startY) < 5) return;
       drag.moved = true;
-      drag.branch.classList.add('dragging');
+      const shrinking = drag.branch;
+      slide(() => shrinking.classList.add('dragging'));
     }
     event.preventDefault();
     moveToPointer(drag.branch, event.clientY);
@@ -451,11 +491,12 @@
     if (!drag || drag.native || (event && event.pointerId !== drag.pointerId)) return;
     const { branch, moved } = drag;
     drag = null;
-    branch.classList.remove('dragging');
+    slide(() => branch.classList.remove('dragging'));
     if (!moved) return;
     renumber();
     save();
     announce(branch);
+    settle(branch);
   }
 
   trunk.addEventListener('pointerup', endDrag);
