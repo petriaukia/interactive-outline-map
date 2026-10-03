@@ -81,8 +81,8 @@ if command -v node >/dev/null 2>&1; then
   python3 - "$file" > "$tmp" <<'PYEXTRACT'
 import re, sys
 html = open(sys.argv[1], encoding='utf-8').read()
-match = re.search(r'<script>(.*?)</script>', html, re.S)
-sys.stdout.write(match.group(1) if match else '')
+# every inline script, one block each, so a small head script cannot hide the main one
+sys.stdout.write('\n;\n'.join('{' + s + '\n}' for s in re.findall(r'<script>(.*?)</script>', html, re.S)))
 PYEXTRACT
   if node --check "$tmp" >/dev/null 2>&1; then report ok "embedded script parses"; else report FAIL "embedded script does not parse"; fi
   rm -f "$tmp"
