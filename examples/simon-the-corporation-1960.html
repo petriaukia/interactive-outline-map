@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Simon: The Corporation — outline</title>
+<style>
+  :root{
+    --wine:#CC0033;--wine-50:#FDF1F4;--petrol-50:#EDF6F6;--amber-50:#FBF3E4;--navy-50:#EBEEF5;
+    --petrol:#107C82;--petrol-700:#0C5F64;--petrol-100:#C9E4E6;
+    --amber:#E3A130;--amber-700:#B97F1E;
+    --navy:#1C2333;--slate:#334155;--ink:#16181D;
+    --bg:#F4F5F7;--surface:#FFFFFF;--line:#E4E6EA;--trunk:#9AA2AE;--gray:#666;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0 0 80px;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  /* One heavy rule frames the whole map; everything below it is ordered by
+     thin rules and space, so the root reads as the top of the tree rather
+     than as a block of its own. */
+  header{margin-top:48px;padding-top:18px;border-top:4px solid var(--navy)}
+  h1{margin:0;color:var(--navy);font-size:clamp(26px,5vw,38px);line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
+  .source{max-width:70ch;margin:8px 0 0;color:var(--gray);font-size:13px}
+  .source a{color:var(--petrol-700);font-weight:650;text-underline-offset:2px}
+  .tools{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;margin:22px 0 0;
+    padding-top:12px;border-top:1px solid var(--trunk)}
+  .hint{font-size:12px;color:var(--gray)}
+  .hint b{color:var(--navy)}
+  .actions{display:flex;flex-wrap:wrap;gap:6px}
+  .actions button{appearance:none;padding:6px 11px;border:1.5px solid var(--navy);border-radius:0;background:transparent;
+    color:var(--navy);font:700 12px/1.2 inherit;cursor:pointer}
+  .actions button:hover{background:var(--navy-50)}
+  .actions button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
+  .actions button.primary{background:var(--navy);color:#fff}
+  .actions button.primary:hover{background:var(--petrol-700);border-color:var(--petrol-700)}
+  /* The root is level zero of the outline: a node on the trunk, with the trunk
+     running on from it into the branches. */
+  .root{position:relative;margin:36px 0 0;padding:0 0 0 52px;color:var(--navy)}
+  .root::before{content:"";position:absolute;left:19px;top:7px;width:16px;height:16px;border-radius:50%;background:var(--navy)}
+  .root::after{content:"";position:absolute;left:26px;top:23px;bottom:0;width:2px;background:var(--trunk)}
+  .root h2{margin:0;font-size:24px;line-height:1.25;letter-spacing:-.005em}
+  .root p{margin:6px 0 0;color:var(--gray);font-size:14px}
+  .trunk{margin-left:26px;padding:26px 0 0;border-left:2px solid var(--trunk)}
+  .branch{position:relative;margin:0 0 26px;padding-left:34px;transition:opacity .15s ease}
+  .branch::before{content:"";position:absolute;left:-2px;top:20px;width:34px;height:2px;background:var(--trunk)}
+  .bhead{display:inline-flex;align-items:center;gap:10px;padding:7px 13px 7px 10px;
+    border:2px solid var(--bc,var(--gray));border-radius:999px;background:var(--surface);
+    color:var(--navy);font-size:15px;font-weight:700;cursor:pointer;user-select:none}
+  .grip{flex:0 0 12px;width:12px;height:16px;margin:0 3px 0 1px;
+    color:var(--gray);background-image:radial-gradient(circle at 2px 2px,currentColor 1.2px,transparent 1.35px);
+    background-size:4px 4px;background-repeat:repeat;opacity:.82;cursor:grab;touch-action:none}
+  .grip:active{cursor:grabbing}
+  /* The state control draws its sign instead of typesetting it, so the bar is
+     exactly on the centre of the circle in every font. */
+  .state{position:relative;flex:0 0 18px;width:18px;height:18px;margin-left:2px;border-radius:50%;
+    background:var(--bc,var(--gray))}
+  .state::before,.state::after{content:"";position:absolute;top:50%;left:50%;width:9px;height:2px;
+    margin:-1px 0 0 -4.5px;border-radius:1px;background:#fff}
+  .state::after{transform:rotate(90deg);opacity:0}
+  .branch.is-collapsed .state::after{opacity:1}
+  .bhead:focus-visible{outline:3px solid color-mix(in srgb,var(--bc) 28%,transparent);outline-offset:3px}
+  .dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:var(--bc,var(--gray));color:#fff;font-size:12px;font-weight:800}
+  .bnote{max-width:60ch;margin:6px 0 0 6px;color:var(--gray);font-size:12.5px}
+  .branch.is-collapsed{margin-bottom:14px}
+  .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:none}
+  /* What is folded away shows as cards stacked behind the pill: one card for a
+     single leaf, two for more. Drawn as hard-edged copies of the pill, so they
+     always sit behind it and follow its rounding. */
+  .branch[data-stack="1"] .bhead{
+    box-shadow:5px 5px 0 -2px var(--surface),5px 5px 0 0 var(--bc,var(--gray))}
+  .branch[data-stack="2"] .bhead{
+    box-shadow:5px 5px 0 -2px var(--surface),5px 5px 0 0 var(--bc,var(--gray)),
+               10px 10px 0 -2px var(--surface),10px 10px 0 0 var(--bc,var(--gray))}
+  .branch[data-stack="0"] .state{display:none}
+  .branch[data-stack="0"] .bhead{cursor:default}
+  /* While a branch is dragged it shrinks to its heading, drawn as the empty
+     slot it will land in, so the drop point is always visible. */
+  .branch.dragging .bnote,.branch.dragging .leaves{display:none}
+  .branch.dragging .bhead{cursor:grabbing;border-style:dashed;
+    background:color-mix(in srgb,var(--bc) 10%,var(--surface));box-shadow:none}
+  .branch.just-moved .bhead{animation:settle .9s ease-out}
+  @keyframes settle{from{background:color-mix(in srgb,var(--bc) 28%,var(--surface))}to{background:var(--surface)}}
+  @media (prefers-reduced-motion:reduce){.branch.just-moved .bhead{animation:none}}
+  .leaves{--leaf-line:color-mix(in srgb,var(--bc) 45%,transparent);position:relative;
+    margin:12px 0 0 10px;padding-left:18px}
+  .leaves::before{content:"";position:absolute;left:0;top:0;width:2px;height:var(--guide-end,calc(100% - 22px));
+    background:repeating-linear-gradient(to bottom,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf{position:relative;max-width:620px;margin:6px 0;padding:8px 13px;border:1px solid var(--line);
+    border-radius:8px;background:var(--surface);font-size:14px;box-shadow:0 1px 3px rgba(22,24,29,.08)}
+  .leaf::before{content:"";position:absolute;left:-20px;top:calc(50% - 1px);width:20px;height:2px;
+    background:repeating-linear-gradient(to right,var(--leaf-line) 0 4px,transparent 4px 8px)}
+  .leaf b{color:var(--navy)}
+  .leaf.highlight{--kind:var(--navy);border:2px solid var(--navy);background:var(--navy-50)}
+  .leaf.source{--kind:var(--petrol);border:2px solid var(--petrol);background:var(--petrol-50)}
+  .leaf.question{--kind:var(--amber-700);border:2px solid var(--amber-700);background:var(--amber-50)}
+  /* Wine means one thing on this page: these words are the writer's own.
+     It is the strongest mark the palette has, and it is not the map maker's
+     to hand to a sentence they wrote themselves. */
+  .leaf.own{--kind:var(--wine);border:2px solid var(--wine);background:var(--wine-50);font-style:italic}
+  .leaf.highlight::after,.leaf.source::after,.leaf.question::after,.leaf.own::after{
+    position:absolute;right:10px;top:-9px;padding:2px 8px;border-radius:999px;background:var(--kind);
+    color:#fff;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .leaf.highlight::after{content:var(--flag-key-idea,"key idea")}
+  .leaf.source::after{content:var(--flag-source,"from the source")}
+  .leaf.question::after{content:var(--flag-question,"open question")}
+  .leaf.own::after{content:var(--flag-own,"your words")}
+  .twig{margin:6px 0 2px 16px;padding-left:14px;border-left:2px dotted var(--line);color:#3D4148;font-size:13px}
+  .twig div{margin:4px 0}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:12px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  @media (max-width:640px){.tools{align-items:flex-start;flex-direction:column}}
+  @media print{
+    body{--bg:#fff;padding:0 6mm;background:#fff}.leaf{box-shadow:none}header{margin-top:6mm}.tools{display:none}
+    .branch.is-collapsed .bnote,.branch.is-collapsed .leaves{display:block}.grip,.state{display:none}
+    .branch[data-stack] .bhead{box-shadow:none}
+  }
+  /* ---- Reading pane: every leaf opens the full text at its own paragraphs ---- */
+  :root{--flag-key-idea:"key idea";--flag-source:"from the source";--flag-question:"open question";--flag-own:"your words";
+    --reader-w:min(46vw,680px)}
+  .leaf,.twig div[data-from]{cursor:pointer}
+  .leaf:hover{border-color:color-mix(in srgb,var(--bc) 55%,var(--line))}
+  .twig div[data-from]:hover{color:var(--navy)}
+  .leaf.is-reading{outline:2px solid var(--bc);outline-offset:3px}
+  .twig div.is-reading{color:var(--navy);font-weight:600}
+  .loc{white-space:nowrap;color:var(--gray);font-size:11px;font-weight:650;text-decoration:none;
+    font-variant-numeric:tabular-nums;font-style:normal}
+  .loc span{font-weight:400}
+  .loc:hover{color:var(--petrol-700);text-decoration:underline;text-underline-offset:2px}
+  .root .loc,.bnote .loc{font-size:11.5px}
+  .reader{max-width:900px;margin:56px auto 0;padding:0 20px;background:var(--surface)}
+  .rd-bar{display:none}
+  .rd-body{max-width:72ch;margin:0 auto;padding:24px 0 64px}
+  .rd-title{padding-top:16px;border-top:4px solid var(--navy)}
+  .rd-title h2{margin:0;color:var(--navy);font-size:22px;line-height:1.2}
+  .rd-title p{margin:6px 0 0;color:var(--gray);font-size:13px}
+  .rd-body h3{margin:44px 0 0;padding-top:10px;border-top:2px solid var(--navy);color:var(--navy);
+    font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  .rd-body h4{margin:30px 0 0;color:var(--navy);font-size:16px}
+  .para{position:relative;margin:12px 0 0;padding:6px 10px 6px 54px;font:16px/1.62 Georgia,"Iowan Old Style",serif;
+    color:var(--ink);scroll-margin-top:72px;transition:background-color .2s}
+  .para .pn{position:absolute;left:8px;top:9px;color:var(--trunk);font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    text-decoration:none;font-variant-numeric:tabular-nums}
+  .para .pn:hover{color:var(--bc)}
+  .para .pg{float:right;margin:2px 0 4px 12px;color:var(--gray);font:11px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  /* Verse and long quotations keep their lines and sit inside the text column. */
+  .para.quote{padding-left:84px;font-size:15px;line-height:1.55;color:var(--slate)}
+  .para.on{background:color-mix(in srgb,var(--bc) 9%,var(--surface))}
+  .para.on .pn{color:var(--bc)}
+  .nref{font:700 10px/0 -apple-system,BlinkMacSystemFont,sans-serif}
+  .nref a{color:var(--petrol-700);text-decoration:none}
+  .fn{margin:8px 0 0 54px;padding:6px 10px;border-top:1px solid var(--line);color:var(--gray);
+    font-size:12.5px;line-height:1.5;scroll-margin-top:72px}
+  .rd-title .fn{margin-left:0;padding-left:0}
+  .fn b{color:var(--petrol-700);margin-right:4px}
+
+  html.js .reader{position:fixed;z-index:30;top:0;right:0;bottom:0;width:100%;max-width:none;margin:0;padding:0;
+    display:flex;flex-direction:column;border-left:1px solid var(--trunk);transform:translateX(102%);
+    visibility:hidden;transition:transform .22s cubic-bezier(.2,.7,.3,1),visibility 0s linear .22s}
+  html.js body.reading .reader{transform:none;visibility:visible;transition:transform .22s cubic-bezier(.2,.7,.3,1)}
+  html.js .rd-bar{display:flex;align-items:center;gap:10px;flex:0 0 auto;padding:10px 16px;
+    border-bottom:1px solid var(--line);background:var(--surface)}
+  .rd-crumb{display:flex;align-items:center;gap:8px;min-width:0;flex:1;color:var(--navy);font-size:13px;font-weight:700}
+  .rd-crumb .dot{flex:0 0 22px;background:var(--bc,var(--gray))}
+  .rd-crumb .t{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .rd-crumb .r{flex:0 0 auto;color:var(--gray);font-weight:500;font-variant-numeric:tabular-nums}
+  .rd-bar button{appearance:none;flex:0 0 auto;min-width:32px;height:30px;padding:0 9px;border:1.5px solid var(--navy);border-radius:0;
+    background:transparent;color:var(--navy);font:700 12px/1 inherit;cursor:pointer}
+  .rd-bar button:hover{background:var(--navy-50)}
+  .rd-bar button:focus-visible{outline:3px solid var(--petrol-100);outline-offset:2px}
+  html.js .rd-body{flex:1;overflow-y:auto;max-width:none;margin:0;padding:24px clamp(16px,4vw,40px) 50vh;overscroll-behavior:contain}
+  html.js .rd-body > *{max-width:72ch}
+  @media (max-width:1179px){
+    html.js body.reading{overflow:hidden}
+  }
+  @media (min-width:1180px){
+    html.js .reader{width:var(--reader-w)}
+    html.js body.reading{padding-right:var(--reader-w)}
+    html.js body.reading .wrap{max-width:820px}
+  }
+  @media (max-width:640px){
+    .para{padding-left:12px;padding-top:24px}
+    .para.quote{padding-left:32px}
+    .para .pn{top:6px;left:12px}
+    .fn{margin-left:12px}
+  }
+  @media print{
+    html.js .reader{position:static;transform:none;visibility:visible;width:auto;border:0;display:block}
+    html.js .rd-bar{display:none}
+    html.js .rd-body{overflow:visible;padding:0}
+    .para.on{background:none}
+    body.reading{padding-right:0}
+  }
+</style>
+</head>
+<body data-map-key="simon-the-corporation-1960-en"
+  data-heading-hint="Click to hide or restore · Drag the node, or press Alt with the arrow keys, to reorder"
+  data-node-hint="Drag to reorder" data-hidden-label="{n} hidden" data-move-status="Branch {n} of {total}"
+  data-copied-label="Copied" data-copy-failed-label="Press ⌘C" data-full-text="Full text">
+<main class="wrap">
+  <header>
+    <h1>The Corporation: Will It Be Managed by Machines?</h1>
+    <p class="source">Herbert A. Simon, in M. Anshen &amp; G. L. Bach (eds.), <i>Management and Corporations 1985</i>, McGraw-Hill, 1960. An outline without the text: each card names the section of the chapter it covers, and together the cards cover every paragraph exactly once.</p>
+    <div class="tools" aria-label="Map controls">
+      <div class="hint"><b>Click</b> a heading to fold it · <b>drag</b> the dots or press <b>Alt</b>+arrows to reorder</div>
+      <div class="actions">
+        <button type="button" id="expand-all">Open all</button>
+        <button type="button" id="collapse-all">Hide all</button>
+        <button type="button" id="reset-order">Restore order</button>
+        <button type="button" class="primary" id="copy-outline">Copy as outline</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="root">
+    <h2>Machines will be able to run the corporation by 1985, yet people will still do roughly the same jobs</h2>
+    <p>Simon forecasts the long-run equilibrium: the technical ability to replace people in every function, and comparative advantage deciding where people still work. <span class="loc">The Broader Significance of Automation</span></p>
+  </section>
+
+  <section class="trunk">
+    <article class="branch" data-branch-id="question" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">1</span><span class="label">The question and its limits</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">What is forecast, and what is left out. <span class="loc">Introduction</span></p>
+      <div class="leaves">
+        <div class="leaf" id="leaf-question-1"><span class="ltext">A building site outside the window: mechanical elephants, their mahouts and wheelbarrows show today&#x27;s division of labour.</span> <span class="loc">Introduction</span></div>
+        <div class="leaf" id="leaf-question-2"><span class="ltext">Gross effects at the point of impact vs. net effects in later ripples; transient and indirect effects.</span> <span class="loc">Introduction</span></div>
+        <div class="leaf" id="leaf-question-3"><span class="ltext">Transient harms are set aside; the rule: the society that gains pays for the change and compensates the losers.</span> <span class="loc">Introduction</span></div>
+        <div class="leaf highlight" id="leaf-question-4"><span class="ltext">The task is to picture society in its new equilibrium, after every secondary adjustment has been made.</span> <span class="loc">Introduction</span></div>
+        <div class="leaf" id="leaf-question-5"><span class="ltext">A plan in four parts: equilibrium, the new technology, the automation of management, the wider meaning.</span> <span class="loc">Introduction</span></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="hammer-anvil" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">2</span><span class="label">The hammer and the anvil</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">The frame of the forecast: what changes by itself, what stays put, and how comparative advantage decides. <span class="loc">Predicting Long-Run Equilibrium – The Invariants</span></p>
+      <div class="leaves">
+        <div class="leaf highlight" id="leaf-hammer-anvil-1"><span class="ltext">The forecast rests on two things: autonomous first causes (the hammer) and fixed givens (the anvil).</span> <span class="loc">Predicting Long-Run Equilibrium</span></div>
+        <div class="leaf" id="leaf-hammer-anvil-2"><span class="ltext">The hammer: growing knowledge sets what is feasible, growing capital what is economical; the new knowledge is how thinking works.</span> <span class="loc">The Causes of Change</span></div>
+        <div class="leaf source" id="leaf-hammer-anvil-3"><span class="ltext">Within far less than 25 years, machines able to substitute for “any and all human functions in organizations”.</span> <span class="loc">The Causes of Change</span></div>
+        <div class="leaf" id="leaf-hammer-anvil-4"><span class="ltext">The anvil: full employment and an unchanged spread of ability. Change shows in the occupational profile, not in unemployment.</span> <span class="loc">The Invariants</span></div>
+        <div class="leaf" id="leaf-hammer-anvil-5"><span class="ltext">The paradox: if machines win everywhere, are people unemployable? No: prices adjust, and comparative advantage decides.</span> <span class="loc">The Invariants</span></div>
+        <div class="leaf source" id="leaf-hammer-anvil-6"><span class="ltext">A computer 1,000× faster than a bookkeeper, 100× faster than a stenographer: fewer bookkeepers, more stenographers.</span> <span class="loc">The Invariants</span></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="factory-office" style="--bc:var(--slate)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">3</span><span class="label">The nearly automatic factory and office</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">What automation in production and in the office already teaches. <span class="loc">The New Technology of Information Processing – The Occupational Profile</span></p>
+      <div class="leaves">
+        <div class="leaf" id="leaf-factory-office-1"><span class="ltext">Automation continues the Industrial Revolution: first muscle power, now sensing, choosing and handling.</span> <span class="loc">The New Technology of Information Processing</span></div>
+        <div class="leaf" id="leaf-factory-office-2"><span class="ltext">The workerless factory is feasible, but the typical 1985 factory will be at the level of a 1960 refinery.</span> <span class="loc">The Nearly Automatic Factory and Office</span></div>
+        <div class="leaf" id="leaf-factory-office-3"><span class="ltext">The office automates faster than the factory; both become small groups working with large machines.</span> <span class="loc">The Nearly Automatic Factory and Office</span></div>
+        <div class="leaf highlight" id="leaf-factory-office-4"><span class="ltext">Fewer people per unit of output does not mean fewer people in total.</span> <span class="loc">The Nearly Automatic Factory and Office</span><div class="twig"><div>A warning against the same error as with comparative advantage <span class="loc">The Nearly Automatic Factory and Office</span></div><div>Lesson 1: work is not dehumanised; it tends to become more pleasant <span class="loc">The Nearly Automatic Factory and Office</span></div><div>Lesson 2: the profile of skill levels barely changes <span class="loc">The Nearly Automatic Factory and Office</span></div></div></div>
+        <div class="leaf" id="leaf-factory-office-5"><span class="ltext">The occupational profile also depends on income and price elasticities: the psychiatry example.</span> <span class="loc">The Occupational Profile</span></div>
+        <div class="leaf" id="leaf-factory-office-6"><span class="ltext">The cheapest automation removes a step altogether: garbage ground into the sewer, a Columbus egg.</span> <span class="loc">The Occupational Profile</span></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="flexibility" style="--bc:var(--petrol-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">4</span><span class="label">Flexibility: where people keep their edge</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">The human as a bundle of capacities, and two ways around human flexibility. <span class="loc">Another Approach to Prediction – Environmental Control a Substitute for Flexibility</span></p>
+      <div class="leaves">
+        <div class="leaf" id="leaf-flexibility-1"><span class="ltext">Classify people by capacities, not occupations: eyes, brain, hands, legs, muscles; general vs. special-purpose machines.</span> <span class="loc">Another Approach to Prediction</span></div>
+        <div class="leaf" id="leaf-flexibility-2"><span class="ltext">Mechanisation took muscle and repetition; what remained was flexible thinking, senses, hands and moving over rough ground.</span> <span class="loc">Another Approach to Prediction</span></div>
+        <div class="leaf highlight" id="leaf-flexibility-3"><span class="ltext">Flexibility is the human comparative advantage. Imitate it in the machine, or remove the need for it?</span> <span class="loc">Another Approach to Prediction</span></div>
+        <div class="leaf" id="leaf-flexibility-4"><span class="ltext">The brain&#x27;s problem solving will be automated before the eyes, hands and legs.</span> <span class="loc">Flexibility in Automata</span></div>
+        <div class="leaf" id="leaf-flexibility-5"><span class="ltext">Controlling the environment substitutes for flexibility, and the effect accumulates step by step.</span> <span class="loc">Environmental Control a Substitute for Flexibility</span><div class="twig"><div>Adapt the organism to the environment, or the environment to the organism; homeostasis <span class="loc">Environmental Control a Substitute for Flexibility</span></div><div>The smooth road, standardised raw material, transfer machines <span class="loc">Environmental Control a Substitute for Flexibility</span></div><div>Mechanisation has more often removed the need for flexibility than imitated it <span class="loc">Environmental Control a Substitute for Flexibility</span></div></div></div>
+        <div class="leaf" id="leaf-flexibility-6"><span class="ltext">Source data will be made machine-readable. High status is no shelter: physician, vice-president, college teacher.</span> <span class="loc">Environmental Control a Substitute for Flexibility</span></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="organisation-1985" style="--bc:var(--amber-700)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">5</span><span class="label">Man as man&#x27;s environment</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Interaction, supervision and selling, and what the 1985 organisation looks like. <span class="loc">Man as Man’s Environment – Summary: Blue-collar and Clerical Automation</span></p>
+      <div class="leaves">
+        <div class="leaf" id="leaf-organisation-1985-1"><span class="ltext">Other people are the roughest part of the environment. Much interaction exists to supervise human work.</span> <span class="loc">Man as Man’s Environment</span></div>
+        <div class="leaf" id="leaf-organisation-1985-2"><span class="ltext">Work-pushing and expediting shrink from supervision once machines and schedules set the pace.</span> <span class="loc">Man as Man’s Environment</span></div>
+        <div class="leaf" id="leaf-organisation-1985-3"><span class="ltext">The salesman: if buying does not become more objective, selling takes a larger share of employment.</span> <span class="loc">Man as Man’s Environment</span></div>
+        <div class="leaf" id="leaf-organisation-1985-4"><span class="ltext">Three roles: a few in-line workers, a growing maintenance force, professionals in design and management.</span> <span class="loc">Summary: Blue-collar and Clerical Automation</span></div>
+        <div class="leaf" id="leaf-organisation-1985-5"><span class="ltext">Stressful supervisory relations decline; face-to-face personal service grows as a share of work.</span> <span class="loc">Summary: Blue-collar and Clerical Automation</span></div>
+        <div class="leaf highlight" id="leaf-organisation-1985-6"><span class="ltext">The outcome does not upend work: a more relaxed world, and perhaps more of us will be salesmen.</span> <span class="loc">Summary: Blue-collar and Clerical Automation</span></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="management" style="--bc:var(--navy)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">6</span><span class="label">The automation of management</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Programmed decisions go first, ill-structured ones follow. <span class="loc">The Automation of Management – Some Other Dimensions of Change in Management</span></p>
+      <div class="leaves">
+        <div class="leaf" id="leaf-management-1"><span class="ltext">Decision making in the broad sense: finding problems, designing courses of action, choosing. A continuum from programmed to unprogrammed.</span> <span class="loc">The Automation of Management</span><div class="twig"><div>Three stages; the first two take most of the effort <span class="loc">The Automation of Management</span></div><div>Programmed and unprogrammed decisions; a loose link to organisational level <span class="loc">The Automation of Management</span></div><div>Two techniques: operations research and heuristic programming <span class="loc">The Automation of Management</span></div></div></div>
+        <div class="leaf highlight" id="leaf-management-2"><span class="ltext">Operations research already makes middle management&#x27;s repetitive decisions at least as well as managers do.</span> <span class="loc">Operations Research</span><div class="twig"><div>Operations research as a movement and as a method <span class="loc">Operations Research</span></div><div>Six examples: inventory, order flow, scheduling, motor design, feed mixes, an airline <span class="loc">Operations Research</span></div><div>Middle management&#x27;s share will shrink within a few years <span class="loc">Operations Research</span></div></div></div>
+        <div class="leaf" id="leaf-management-3"><span class="ltext">Computers are not speedy morons: they handle symbols, understand compilers and can learn.</span> <span class="loc">Heuristic Programing</span><div class="twig"><div>They replace people without simulating them <span class="loc">Heuristic Programing</span></div><div>Four statements about computers <span class="loc">Heuristic Programing</span></div></div></div>
+        <div class="leaf source" id="leaf-management-4"><span class="ltext">Three chess programs: about a million, 2,500 and under 50 alternatives examined, all at the same weak level.</span> <span class="loc">Heuristic Programing</span><div class="twig"><div>What a heuristic program is, and examples <span class="loc">Heuristic Programing</span></div><div>Los Alamos, Bernstein, RAND-Carnegie <span class="loc">Heuristic Programing</span></div><div>Within ten years or less, ill-structured problems too <span class="loc">Heuristic Programing</span></div></div></div>
+        <div class="leaf" id="leaf-management-5"><span class="ltext">Economically, people keep their edge in physical flexibility better than in mental; middle management shrinks most.</span> <span class="loc">Heuristic Programing – A Summary: The Automation of Management</span></div>
+        <div class="leaf" id="leaf-management-6"><span class="ltext">The manager&#x27;s job: a longer time horizon, less technical knowledge needed, programmers will not become an elite.</span> <span class="loc">Some Other Dimensions of Change in Management</span><div class="twig"><div>A longer horizon: planning and redesigning systems <span class="loc">Some Other Dimensions of Change in Management</span></div><div>Managers will need to know less about the machinery <span class="loc">Some Other Dimensions of Change in Management</span></div><div>Programming is likelier to die out than to rule <span class="loc">Some Other Dimensions of Change in Management</span></div><div>Systems thinking, for which there is no science yet <span class="loc">Some Other Dimensions of Change in Management</span></div></div></div>
+      </div>
+    </article>
+
+    <article class="branch" data-branch-id="significance" style="--bc:var(--petrol)">
+      <div class="bhead"><span class="grip" aria-hidden="true"></span><span class="dot">7</span><span class="label">The broader significance</span><span class="state" aria-hidden="true"></span></div>
+      <p class="bnote">Once scarcity is gone, the long-range questions remain. <span class="loc">The Broader Significance of Automation – Man in the Universe</span></p>
+      <div class="leaves">
+        <div class="leaf highlight" id="leaf-significance-1"><span class="ltext">Two predictions that seem to clash: machines could run the corporation, yet occupations stay familiar.</span> <span class="loc">The Broader Significance of Automation</span></div>
+        <div class="leaf" id="leaf-significance-2"><span class="ltext">Scarcity stops being the first problem; the fears of technological unemployment and of robots (R.U.R.) can be dropped.</span> <span class="loc">The Broader Significance of Automation</span></div>
+        <div class="leaf" id="leaf-significance-3"><span class="ltext">Three long-range problems: a science of man, goals other than work, and man&#x27;s place in the universe.</span> <span class="loc">The Broader Significance of Automation</span></div>
+        <div class="leaf" id="leaf-significance-4"><span class="ltext">A science of man: by 1985 psychology as successful as chemistry now, with consequences for teaching and psychiatry.</span> <span class="loc">A Science of Man</span></div>
+        <div class="leaf" id="leaf-significance-5"><span class="ltext">The problem of leisure; the corporation loses its place as a source of status and creativity.</span> <span class="loc">Social Goals</span></div>
+        <div class="leaf" id="leaf-significance-6"><span class="ltext">Copernicus, Darwin, Freud — and now thinking machines take away the last claim to uniqueness.</span> <span class="loc">Man in the Universe</span></div>
+      </div>
+    </article>
+  </section>
+
+  <div class="legend"></div>
+</main>
+
+<script>
+(() => {
+  const trunk = document.querySelector('.trunk');
+  if (!trunk) return;
+  const body = document.body;
+  const PLACEHOLDER = 'replace-with-a-stable-map-key';
+  const mapKey = body.dataset.mapKey;
+  const storageKey = 'interactive-outline-map:' +
+    (mapKey && mapKey !== PLACEHOLDER ? mapKey : location.pathname);
+
+  /* Every user-visible string can be overridden with a data-attribute on <body>. */
+  const text = {
+    headingHint: body.dataset.headingHint || 'Click to hide or restore · Drag the node, or press Alt with the arrow keys, to reorder',
+    nodeHint: body.dataset.nodeHint || 'Drag to reorder',
+    hidden: body.dataset.hiddenLabel || '{n} hidden',
+    moved: body.dataset.moveStatus || 'Branch {n} of {total}',
+    copied: body.dataset.copiedLabel || 'Copied',
+    copyFailed: body.dataset.copyFailedLabel || 'Press ⌘C'
+  };
+  const fill = (template, values) =>
+    Object.entries(values).reduce((out, [key, value]) => out.split('{' + key + '}').join(String(value)), template);
+
+  const branches = () => [...trunk.querySelectorAll('.branch')];
+  const initialOrder = branches().map(branch => branch.dataset.branchId);
+  const signature = initialOrder.join('|');
+  const labelOf = branch => (branch.querySelector('.label') || branch.querySelector('.bhead')).textContent.trim();
+
+  const status = document.createElement('p');
+  status.className = 'sr-only';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  body.appendChild(status);
+
+  /* The legend is generated from the branches, so it cannot drift out of order
+     or out of wording. */
+  const legend = document.querySelector('.legend');
+  function syncLegend() {
+    if (!legend) return;
+    legend.replaceChildren(...branches().map(branch => {
+      const item = document.createElement('span');
+      const mark = document.createElement('i');
+      mark.style.background = branch.style.getPropertyValue('--bc') || 'var(--slate)';
+      item.append(mark, document.createTextNode(' ' + labelOf(branch)));
+      return item;
+    }));
+  }
+
+  function sizeLeafGuides() {
+    branches().forEach(branch => {
+      const leaves = branch.querySelector('.leaves');
+      const lastLeaf = leaves && leaves.querySelector('.leaf:last-child');
+      if (!lastLeaf) return;
+      const hidden = branch.classList.contains('is-collapsed');
+      if (hidden) leaves.style.cssText = 'display:block;position:absolute;visibility:hidden';
+      const end = lastLeaf.offsetTop + lastLeaf.offsetHeight / 2;
+      if (hidden) leaves.style.cssText = '';
+      if (end > 0) leaves.style.setProperty('--guide-end', end + 'px');
+    });
+  }
+
+  function renumber() {
+    branches().forEach((branch, index) => branch.querySelector('.dot').textContent = String(index + 1));
+    syncLegend();
+    requestAnimationFrame(sizeLeafGuides);
+  }
+
+  function save() {
+    const state = {
+      signature,
+      order: branches().map(branch => branch.dataset.branchId),
+      collapsed: branches().filter(branch => branch.classList.contains('is-collapsed')).map(branch => branch.dataset.branchId)
+    };
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function leafCount(branch) {
+    return branch.querySelectorAll('.leaves > .leaf').length;
+  }
+
+  function setCollapsed(branch, collapsed) {
+    branch.classList.toggle('is-collapsed', collapsed);
+    requestAnimationFrame(sizeLeafGuides);
+    const head = branch.querySelector('.bhead');
+    head.setAttribute('aria-expanded', String(!collapsed));
+    const count = leafCount(branch);
+    if (collapsed) {
+      branch.dataset.stack = String(Math.min(count, 2));
+      if (count) status.textContent = fill(text.hidden, { n: count });
+    } else {
+      delete branch.dataset.stack;
+    }
+  }
+
+  function toggle(branch) {
+    if (!leafCount(branch)) return;   /* nothing to fold away */
+    setCollapsed(branch, !branch.classList.contains('is-collapsed'));
+    save();
+  }
+
+  function applyOrder(order) {
+    const byId = new Map(branches().map(branch => [branch.dataset.branchId, branch]));
+    order.forEach(id => {
+      const branch = byId.get(id);
+      if (branch) { trunk.appendChild(branch); byId.delete(id); }
+    });
+    byId.forEach(branch => trunk.appendChild(branch));
+    renumber();
+  }
+
+  function announce(branch) {
+    const list = branches();
+    status.textContent = fill(text.moved, { n: list.indexOf(branch) + 1, total: list.length });
+  }
+
+  /* Reordering slides the branches from where they were drawn to where they
+     now are, instead of letting them jump. The start is read from the screen,
+     so a slide that is interrupted by the next swap carries on smoothly. */
+  const reducedMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function layoutTop(branch) {
+    const shift = new DOMMatrixReadOnly(getComputedStyle(branch).transform).m42;
+    return branch.getBoundingClientRect().top - shift;
+  }
+  function slide(reorder) {
+    const list = branches();
+    const drawn = new Map(list.map(branch => [branch, branch.getBoundingClientRect().top]));
+    reorder();
+    if (reducedMotion || !Element.prototype.animate) return;
+    list.forEach(branch => {
+      const from = drawn.get(branch) - layoutTop(branch);
+      if (Math.abs(from) < 1) return;
+      branch.animate([{ transform: `translateY(${from}px)` }, { transform: 'none' }],
+        { duration: 200, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    });
+  }
+  function settle(branch) {
+    branch.classList.remove('just-moved');
+    void branch.offsetWidth;
+    branch.classList.add('just-moved');
+    setTimeout(() => branch.classList.remove('just-moved'), 950);
+  }
+
+  function moveBy(branch, delta) {
+    const list = branches();
+    const target = list.indexOf(branch) + delta;
+    if (target < 0 || target >= list.length) return;
+    slide(() => {
+      if (delta < 0) trunk.insertBefore(branch, list[target]);
+      else trunk.insertBefore(branch, list[target].nextElementSibling);
+    });
+    renumber();
+    save();
+    announce(branch);
+    settle(branch);
+  }
+
+  branches().forEach(branch => {
+    const head = branch.querySelector('.bhead');
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', 'true');
+    head.setAttribute('title', text.headingHint);
+    if (!leafCount(branch)) branch.dataset.stack = '0';
+    const grip = branch.querySelector('.grip');
+    if (grip) grip.setAttribute('title', text.nodeHint);
+  });
+
+  /* Mouse keeps the browser's own drag image — the ghost of the heading you
+     grabbed. Touch and pen have no native drag, so they get a pointer path. */
+  let drag = null;
+
+  branches().forEach(branch => {
+    const grip = branch.querySelector('.grip');
+    if (!grip) return;
+    grip.addEventListener('mousedown', () => { branch.draggable = true; });
+    branch.addEventListener('dragstart', event => {
+      if (!branch.draggable) { event.preventDefault(); return; }
+      drag = { branch, native: true, lastY: event.clientY };
+      setTimeout(() => slide(() => branch.classList.add('dragging')));
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', branch.dataset.branchId);
+      const head = branch.querySelector('.bhead');
+      const rect = head.getBoundingClientRect();
+      const clamp = (value, max) => Math.max(0, Math.min(max, value));
+      event.dataTransfer.setDragImage(head, clamp(event.clientX - rect.left, rect.width), clamp(event.clientY - rect.top, rect.height));
+    });
+    branch.addEventListener('dragend', () => {
+      branch.draggable = false;
+      drag = null;
+      slide(() => branch.classList.remove('dragging'));
+      renumber();
+      save();
+      announce(branch);
+      settle(branch);
+    });
+  });
+  document.addEventListener('mouseup', () => branches().forEach(branch => { branch.draggable = false; }));
+  trunk.addEventListener('dragover', event => {
+    if (!drag || !drag.native) return;
+    event.preventDefault();
+    moveToPointer(drag.branch, event.clientY);
+  });
+  trunk.addEventListener('drop', event => event.preventDefault());
+
+  /* A branch swaps with its neighbour once the pointer crosses the middle of
+     that neighbour's heading, so dropping onto the next heading moves it. Only
+     neighbours in the direction of travel are considered: branches differ in
+     height, and without that a swap could immediately undo itself. */
+  function moveToPointer(branch, clientY) {
+    const dy = clientY - drag.lastY;
+    if (!dy) return;
+    drag.lastY = clientY;
+    const list = branches();
+    const index = list.indexOf(branch);
+    const headMiddle = other => {
+      const head = other.querySelector('.bhead');
+      return layoutTop(other) + head.offsetTop + head.offsetHeight / 2;
+    };
+    let moved = false;
+    if (dy > 0) {
+      for (let i = index + 1; i < list.length && clientY > headMiddle(list[i]); i++) {
+        const after = list[i];
+        slide(() => trunk.insertBefore(branch, after.nextElementSibling));
+        moved = true;
+      }
+    } else {
+      for (let i = index - 1; i >= 0 && clientY < headMiddle(list[i]); i--) {
+        const before = list[i];
+        slide(() => trunk.insertBefore(branch, before));
+        moved = true;
+      }
+    }
+    if (moved) renumber();
+  }
+
+  trunk.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse') return;   /* the mouse uses native drag and drop */
+    const handle = event.target.closest('.grip');
+    if (!handle) return;
+    drag = { branch: handle.closest('.branch'), pointerId: event.pointerId, startY: event.clientY, lastY: event.clientY, moved: false };
+    try { handle.setPointerCapture(event.pointerId); } catch (_) {}
+  });
+
+  trunk.addEventListener('pointermove', event => {
+    if (!drag || drag.native || event.pointerId !== drag.pointerId) return;
+    if (!drag.moved) {
+      if (Math.abs(event.clientY - drag.startY) < 5) return;
+      drag.moved = true;
+      const shrinking = drag.branch;
+      slide(() => shrinking.classList.add('dragging'));
+    }
+    event.preventDefault();
+    moveToPointer(drag.branch, event.clientY);
+  });
+
+  function endDrag(event) {
+    if (!drag || drag.native || (event && event.pointerId !== drag.pointerId)) return;
+    const { branch, moved } = drag;
+    drag = null;
+    slide(() => branch.classList.remove('dragging'));
+    if (!moved) return;
+    renumber();
+    save();
+    announce(branch);
+    settle(branch);
+  }
+
+  trunk.addEventListener('pointerup', endDrag);
+  trunk.addEventListener('pointercancel', endDrag);
+
+  trunk.addEventListener('click', event => {
+    const head = event.target.closest('.bhead');
+    if (!head || event.target.closest('.grip')) return;   /* those are drag handles */
+    toggle(head.closest('.branch'));
+  });
+
+  trunk.addEventListener('keydown', event => {
+    const head = event.target.closest('.bhead');
+    if (!head) return;
+    const branch = head.closest('.branch');
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle(branch);
+      return;
+    }
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    if (!event.altKey && !event.ctrlKey && !event.metaKey) return;
+    event.preventDefault();
+    moveBy(branch, event.key === 'ArrowUp' ? -1 : 1);
+    head.focus();
+  });
+
+  /* The map is a step on the way to writing, so the structure has to be able
+     to leave it. */
+  function flagOf(leaf) {
+    const flag = getComputedStyle(leaf, '::after').content;
+    return flag && flag !== 'none' ? flag.replace(/^"|"$/g, '') : '';
+  }
+
+  function asOutline() {
+    const lines = [];
+    const root = document.querySelector('.root');
+    if (root) {
+      const title = root.querySelector('h2');
+      const note = root.querySelector('p');
+      if (title) lines.push('# ' + title.textContent.trim());
+      if (note) lines.push('', note.textContent.trim());
+    }
+    branches().forEach((branch, index) => {
+      const hidden = branch.classList.contains('is-collapsed');
+      lines.push('', '## ' + (index + 1) + '. ' + labelOf(branch) + (hidden ? '  <!-- hidden -->' : ''));
+      const note = branch.querySelector('.bnote');
+      if (note) lines.push('', '_' + note.textContent.trim() + '_');
+      const leaves = [...branch.querySelectorAll('.leaves > .leaf')];
+      if (leaves.length) lines.push('');
+      leaves.forEach(leaf => {
+        const twig = leaf.querySelector('.twig');
+        const flag = flagOf(leaf);
+        const own = leaf.cloneNode(true);
+        own.querySelectorAll('.twig').forEach(node => node.remove());
+        lines.push('- ' + (flag ? '**' + flag + ':** ' : '') + own.textContent.trim().replace(/\s+/g, ' '));
+        if (twig) [...twig.children].forEach(item => lines.push('  - ' + item.textContent.trim().replace(/\s+/g, ' ')));
+      });
+    });
+    return lines.join('\n').trim() + '\n';
+  }
+
+  const copyButton = document.getElementById('copy-outline');
+  if (copyButton) {
+    const original = copyButton.textContent;
+    const flash = message => {
+      copyButton.textContent = message;
+      setTimeout(() => copyButton.textContent = original, 1600);
+    };
+    copyButton.addEventListener('click', async () => {
+      const outline = asOutline();
+      try {
+        await navigator.clipboard.writeText(outline);
+        flash(text.copied);
+        return;
+      } catch (_) { /* fall through to the selection fallback */ }
+      const field = document.createElement('textarea');
+      field.value = outline;
+      field.setAttribute('readonly', '');
+      field.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      body.appendChild(field);
+      field.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (_) {}
+      field.remove();
+      flash(copied ? text.copied : text.copyFailed);
+    });
+  }
+
+  document.getElementById('expand-all').addEventListener('click', () => { branches().forEach(branch => setCollapsed(branch, false)); save(); });
+  document.getElementById('collapse-all').addEventListener('click', () => { branches().forEach(branch => setCollapsed(branch, true)); save(); });
+  document.getElementById('reset-order').addEventListener('click', () => { applyOrder(initialOrder); save(); });
+
+  /* A stored order is only restored while the file still has the same branches
+     in the same order it had when that state was saved. Regenerating the map
+     therefore wins over a reader's earlier drag. */
+  try {
+    const state = JSON.parse(localStorage.getItem(storageKey));
+    if (state) {
+      if (Array.isArray(state.order) && state.signature === signature) applyOrder(state.order);
+      if (Array.isArray(state.collapsed)) branches().forEach(branch => setCollapsed(branch, state.collapsed.includes(branch.dataset.branchId)));
+    }
+  } catch (_) {}
+  renumber();
+  const guideObserver = 'ResizeObserver' in window ? new ResizeObserver(sizeLeafGuides) : null;
+  if (guideObserver) branches().forEach(branch => {
+    const leaves = branch.querySelector('.leaves');
+    if (leaves) guideObserver.observe(leaves);
+  });
+  window.addEventListener('resize', sizeLeafGuides);
+  window.addEventListener('beforeprint', sizeLeafGuides);
+  sizeLeafGuides();
+})();
+</script>
+</body>
+</html>

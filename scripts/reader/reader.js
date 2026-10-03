@@ -58,7 +58,7 @@
       rbody.scrollTo({ top: Math.max(0, top), behavior: smooth ? 'smooth' : 'auto' });
     });
     if (!opts.keepFocus) reader.querySelector('.rd-close').focus({ preventScroll: true });
-    try { history.replaceState(null, '', from ? '#p' + from : '#teksti'); } catch (_) {}
+    try { history.replaceState(null, '', from ? '#p' + from : '#full-text'); } catch (_) {}
   }
 
   function closeReader() {
@@ -148,4 +148,4 @@
   if (start) {
     const leaf = leafFor(paraOf(+start[1]) || paras[0]);
     if (leaf) openAt(+leaf.dataset.from, +leaf.dataset.to, { keepFocus: true });
-  } else if (location.hash === '#teksti') openAt(0, 0, { keepFocus: true });
+  } else if (location.hash === '#full-text') openAt(0, 0, { keepFocus: true });

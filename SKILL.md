@@ -97,11 +97,13 @@ For an existing HTML map, edit the exact file only when the user asks; otherwise
 
 When the user wants the map to open the source itself — every card leading to the right place in the full text, and every part of the text covered by the map — build a reader map with `scripts/reader/` instead of editing the template by hand.
 
-1. `python3 scripts/reader/pdf_paragraphs.py source.pdf spec.py doc.json` splits a text PDF into numbered paragraphs, headings and footnotes. Read the printed list before outlining: the split is heuristic, and a merged paragraph shifts every number after it.
-2. Write the spec — `META`, `ROOT`, `BRANCHES` — with a paragraph range on every leaf and twig. `scripts/reader/examples/simon-1960.py` is a worked example.
-3. `python3 scripts/reader/build_reader.py doc.json spec.py out.html` refuses to write unless every paragraph belongs to exactly one leaf and every leaf's twigs fill it.
+1. Split the source into numbered paragraphs, headings and footnotes: `pdf_paragraphs.py source.pdf spec.py doc.json` for a text PDF, `html_paragraphs.py source.html spec.py doc.json` for an HTML edition such as Project Gutenberg's. Read the printed list before outlining: the split is heuristic, and a merged paragraph shifts every number after it.
+2. Write the spec — `META`, `ROOT`, `BRANCHES` — with a paragraph range on every leaf and twig. Branches follow the source's order, because each must cover one unbroken run of paragraphs. Worked examples are in `scripts/reader/examples/`.
+3. `build_reader.py doc.json spec.py out.html` refuses to write unless every paragraph belongs to exactly one leaf and every leaf's twigs fill it.
 
-Each leaf carries a `¶`/page locator; clicking it opens the text pane at those paragraphs, scrolling the text marks the leaf it is in, and a paragraph number leads back to the map. The output embeds the whole source text: never put a reader map of a copyrighted work in this repository or anywhere public.
+Each leaf carries a `¶` locator; clicking it opens the text pane at those paragraphs, scrolling the text marks the leaf it is in, and a paragraph number leads back to the map. The interface language comes from `META["ui"]` (`"en"` or `"fi"`, or a dict of strings). Tell the user the page is best used on a laptop-width screen or wider, where map and text sit side by side.
+
+The output embeds the whole source text. Publish it only when the text may be redistributed — public domain or an open licence — and say which. For any other source, build with `--outline-only`: the same map with no text, its locators naming the source's own section headings.
 
 ## Preserve interaction invariants
 

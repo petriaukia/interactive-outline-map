@@ -19,6 +19,14 @@ the splitter is a heuristic, and a merged or split paragraph moves every number.
 """
 import json, re, runpy, subprocess, sys
 
+SMALL = {'a', 'an', 'and', 'as', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to'}
+
+def title_case(s):
+    """PREDICTING LONG-RUN EQUILIBRIUM -> Predicting Long-Run Equilibrium, small words lower."""
+    words = s.lower().split()
+    return ' '.join(w if i and w in SMALL else '-'.join(p[:1].upper() + p[1:] for p in w.split('-'))
+                    for i, w in enumerate(words))
+
 def main(pdf, spec_path, out):
     spec = runpy.run_path(spec_path)['META']
     text = subprocess.run(['pdftotext', '-layout', pdf, '-'], capture_output=True, text=True, check=True).stdout
@@ -55,7 +63,7 @@ def main(pdf, spec_path, out):
             infoot = False
             if s in h1 or s in h2:
                 flush()
-                blocks.append({'type': 'h1' if s in h1 else 'h2', 'text': (s.title() if s.isupper() else re.sub(r'\d+$', '', s)),
+                blocks.append({'type': 'h1' if s in h1 else 'h2', 'text': (title_case(s) if s.isupper() else re.sub(r'\d+$', '', s)),
                                'raw': s, 'page': page_no})
                 continue
             if 3 <= ind <= 5 or re.match(r'^[a-c]\. ', line):

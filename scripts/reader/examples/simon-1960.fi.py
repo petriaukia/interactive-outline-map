@@ -1,12 +1,15 @@
-# Reader-map spec for Herbert A. Simon, "The Corporation: Will It Be Managed by
-# Machines?" (1960). Contains the outline only, never the source text: the text
-# is extracted from the reader's own PDF at build time.
+# Reader-map spec, in Finnish, for Herbert A. Simon, "The Corporation: Will It Be
+# Managed by Machines?" (1960). The spec holds the outline only, never the text:
+# the text is extracted from the reader's own PDF at build time, and the result
+# is for private reading. The source is not ours to redistribute; the public
+# example is simon-1960.en.py built with --outline-only.
 #
-#   python3 scripts/reader/pdf_paragraphs.py Simon_The_Corporation_clean.pdf scripts/reader/examples/simon-1960.py doc.json
-#   python3 scripts/reader/build_reader.py doc.json scripts/reader/examples/simon-1960.py simon-runko.html
+#   python3 scripts/reader/pdf_paragraphs.py Simon_The_Corporation_clean.pdf scripts/reader/examples/simon-1960.fi.py doc.json
+#   python3 scripts/reader/build_reader.py doc.json scripts/reader/examples/simon-1960.fi.py simon-runko.html
 
 META = {
     "lang": "fi",
+    "ui": "fi",
     "text_lang": "en",
     "title": "Simon: The Corporation – runko",
     "h1": "The Corporation: Will It Be Managed by Machines?",
